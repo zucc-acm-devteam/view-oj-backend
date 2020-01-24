@@ -10,7 +10,7 @@ from app.validators.oj_username import OJUsernameForm, SearchOJUsernameForm
 api = RedPrint('oj_username')
 
 
-@api.route("", metheds=['POST'])
+@api.route("", methods=['POST'])
 @login_required
 def create_oj_username():
     # 创建 修改 删除
@@ -31,7 +31,7 @@ def create_oj_username():
     return Success('OJ username has been created')
 
 
-@api.route("", metheds=['GET'])
+@api.route("", methods=['GET'])
 def search_oj_username():
     form = SearchOJUsernameForm().validate_for_api().data_
     res = OJUsername.search(**form)
