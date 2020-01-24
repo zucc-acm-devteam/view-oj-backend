@@ -4,6 +4,7 @@ from sqlalchemy import Column, Integer, String, func
 
 from app import login_manager
 from app.libs.error_code import AuthFailed
+from app.models.accept_problem import AcceptProblem
 from app.models.base import Base, db
 
 
@@ -25,7 +26,7 @@ class User(UserMixin, Base):
 
     @property
     def rating(self):
-        from app.models.accept_problem import AcceptProblem
+
         add_rating = db.session.query(func.sum(AcceptProblem.add_rating)).all()[0][0]
         if add_rating is None:
             add_rating = 0
