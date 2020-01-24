@@ -15,10 +15,5 @@ requests
 tenacity
 WTForms
 gunicorn
-opencv-python
-numpy
 beautifulsoup4
-pillow
 selenium
-xgboost
-scikit-learn
