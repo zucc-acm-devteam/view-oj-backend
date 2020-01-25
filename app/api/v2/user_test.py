@@ -1,10 +1,6 @@
 import json
-from ..base import client
 
-
-def get_session(client):
-    res = client.get('/v2/session')
-    return json.loads(res.data)
+from ...test_base import client
 
 
 def create_session(client, username, password):
@@ -13,34 +9,6 @@ def create_session(client, username, password):
         'password': password
     })
     return json.loads(res.data)
-
-
-def delete_session(client):
-    res = client.delete('/v2/session')
-    return json.loads(res.data)
-
-
-def test_session(client):
-    # 获取登录状态
-    assert get_session(client)['code'] != 0
-    # 管理员登录
-    assert create_session(client, 'admin', 'admin')['code'] == 0
-    # 获取登录状态
-    assert get_session(client)['data']['username'] == 'admin'
-    # 管理员登出
-    assert delete_session(client)['code'] == 0
-
-    # 获取登录状态
-    assert get_session(client)['code'] != 0
-    # 普通用户登录
-    assert create_session(client, 'user', 'user')['code'] == 0
-    # 获取登录状态
-    assert get_session(client)['data']['username'] == 'user'
-    # 普通用户登出
-    assert delete_session(client)['code'] == 0
-
-    # 获取登录状态
-    assert get_session(client)['code'] != 0
 
 
 def get_user(client, id_):
@@ -82,8 +50,6 @@ def test_user(client):
     assert get_user(client, 'user')['data']['status'] == 0
     # 修改其他用户信息(reject)
     assert modify_user(client, 'admin', nickname='user123')['code'] != 0
-    # 普通用户登出
-    assert delete_session(client)['code'] == 0
 
     # 管理员登录
     assert create_session(client, 'admin', 'admin')['code'] == 0
@@ -107,24 +73,3 @@ def test_user(client):
     assert get_user(client, 'guest')['data']['nickname'] == 'guest'
     # 获取所有用户信息
     assert len(search_user(client)['data']['data']) == 3
-    # 管理员登出
-    assert delete_session(client)['code'] == 0
-
-
-def create_oj_username(client, username, oj_id, oj_username):
-    res = client.post('/v2/oj_username', json={
-        'username': username,
-        'oj_id': oj_id,
-        'oj_username': oj_username
-    })
-    return json.loads(res.data)
-
-
-def search_oj_username(client, **kwargs):
-    res = client.get('/v2/oj_username', json=kwargs)
-    return json.loads(res.data)
-
-
-def test_oj_username(client):
-    # 普通用户登录
-    assert create_session(client, 'user', 'user')['code'] == 0

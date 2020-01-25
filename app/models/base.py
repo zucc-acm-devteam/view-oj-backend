@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 from flask_sqlalchemy import BaseQuery
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, cast, Date
 
 
 class SQLAlchemy(_SQLAlchemy):
@@ -79,6 +79,10 @@ class Base(db.Model):
                         res = res.filter(getattr(cls, key).like('%' + value + '%'))
                     else:
                         res = res.filter(getattr(cls, key) == value)
+                if key == 'start_time':
+                    res = res.filter(cast(getattr(cls, 'create_time'), Date) >= value)
+                if key == 'end_time':
+                    res = res.filter(cast(getattr(cls, 'create_time'), Date) <= value)
 
         if kwargs.get('order'):
             for key, value in kwargs['order'].items():

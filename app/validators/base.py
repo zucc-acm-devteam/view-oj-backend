@@ -1,5 +1,7 @@
+import datetime
+
 from flask import request
-from wtforms import Form, IntegerField, StringField
+from wtforms import Form, IntegerField, StringField, DateField
 from wtforms.validators import DataRequired, ValidationError
 
 from app.libs.error_code import ParameterException
@@ -30,19 +32,38 @@ class BaseForm(Form):
 
 
 class SearchForm(BaseForm):
-    page = IntegerField(validators=[DataRequired(message='Page cannot be empty')])
-    page_size = IntegerField(validators=[DataRequired(message='Page size cannot be empty')])
+    page = IntegerField()
+    page_size = IntegerField()
     order = StringField()
 
     def validate_page(self, value):
-        if self.page.data <= 0:
-            raise ValidationError('Page must >= 1')
+        if self.page.data:
+            if self.page.data <= 0:
+                raise ValidationError('Page must >= 1')
 
     def validate_page_size(self, value):
-        if self.page_size.data > 100:
-            raise ValidationError('Page size must <= 100')
+        if self.page_size.data:
+            if self.page_size.data > 100:
+                raise ValidationError('Page size must <= 100')
 
     def validate_order(self, value):
         if self.order.data:
             if self.order.data != 'asc' and self.order.data != 'desc':
                 raise ValidationError('Order must be `asc` or `desc`')
+
+
+class DateForm(Form):
+    start_date = DateField()
+    end_date = DateField()
+
+    def validate_start_date(self, value):
+        if self.start_date.data:
+            self.start_date.data = datetime.datetime.strptime(self.start_date.data, '%Y-%m-%d').date()
+        else:
+            self.start_date.data = datetime.date.today() - datetime.timedelta(days=6)
+
+    def validate_end_date(self, value):
+        if self.end_date.data:
+            self.end_date.data = datetime.datetime.strptime(self.end_date.data, '%Y-%m-%d').date()
+        else:
+            self.end_date.data = datetime.date.today()

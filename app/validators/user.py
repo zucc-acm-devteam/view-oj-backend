@@ -2,7 +2,7 @@ from wtforms import IntegerField, StringField, ValidationError
 from wtforms.validators import DataRequired
 
 from app.models.user import User
-from app.validators.base import BaseForm
+from app.validators.base import BaseForm, SearchForm
 
 
 class CreateUserForm(BaseForm):
@@ -21,7 +21,7 @@ class ModifyUserForm(BaseForm):
     status = StringField()
 
 
-class SearchUserForm(BaseForm):
+class SearchUserForm(SearchForm):
     nickname = StringField()
     group = StringField()
     permission = IntegerField()
