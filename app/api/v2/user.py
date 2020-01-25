@@ -61,6 +61,11 @@ def modify_user_api(id_):
 def search_user_api():
     form = SearchUserForm().validate_for_api().data_
     res = User.search(**form)
+    fields = User.fields.copy()
+    fields.remove('rating')
+    fields.remove('oj_username')
+    for user in res['data']:
+        user.fields = fields
     return jsonify({
         'code': 0,
         'data': res

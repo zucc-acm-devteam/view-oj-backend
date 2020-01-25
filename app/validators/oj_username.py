@@ -17,7 +17,3 @@ class OJUsernameForm(BaseForm):
         if oj.status != 1:
             raise ValidationError('OJ username not allow modify')
 
-
-class SearchOJUsernameForm(BaseForm):
-    oj_id = IntegerField()
-    username = StringField()
