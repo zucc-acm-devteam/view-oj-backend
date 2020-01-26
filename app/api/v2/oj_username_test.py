@@ -1,6 +1,6 @@
 import json
 
-from ...test_base import client
+from app.test_base import client
 
 
 def create_session(client, username, password):

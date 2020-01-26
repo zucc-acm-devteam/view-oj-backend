@@ -1,16 +1,18 @@
+import datetime
 import json
 import re
 
 from bs4 import BeautifulSoup
 
-import app.models.mapping as mapping
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.models.mapping import Mapping
 from app.spiders.base_spider import BaseSpider
 from app.spiders.spider_http import SpiderHttp
 
 
 class CodeforcesSpider(BaseSpider):
-    def get_user_info(self, oj_username):
+    @classmethod
+    def get_user_info(cls, oj_username, accept_problems):
         username = oj_username.oj_username
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)
@@ -21,10 +23,22 @@ class CodeforcesSpider(BaseSpider):
         res = res['result']
         for rec in res:
             if rec['verdict'] == 'OK':
-                accept_problem_list.append('{}-{}'.format(rec['problem']['contestId'], rec['problem']['index']))
+                problem_pid = '{}-{}'.format(rec['problem']['contestId'], rec['problem']['index'])
+                accept_time = datetime.datetime.strftime(
+                    datetime.datetime.fromtimestamp(rec['creationTimeSeconds'],
+                                                    datetime.timezone(datetime.timedelta(hours=8))),
+                    '%Y-%m-%d %H:%M:%S')
+                if accept_problems.get(problem_pid) == accept_time:
+                    break
+                accept_problem_list.append({
+                    'oj': 'codeforces',
+                    'problem_pid': problem_pid,
+                    'accept_time': accept_time
+                })
         return accept_problem_list
 
-    def get_problem_info(self, problem_id):
+    @classmethod
+    def get_problem_info(cls, problem_id):
         p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
         problem_id_1 = p.group(1)
         problem_id_2 = p.group(2)
@@ -37,15 +51,15 @@ class CodeforcesSpider(BaseSpider):
                 rating = DEFAULT_PROBLEM_RATING
         else:  # gym
             try:
-                rating = self._get_gym_constest_rating(problem_id_1)
+                rating = cls._get_gym_contest_rating(problem_id_1)
             except:
                 rating = DEFAULT_PROBLEM_RATING
         return {'rating': rating}
 
     @staticmethod
-    def _get_gym_constest_rating(contest_id):
+    def _get_gym_contest_rating(contest_id):
         star_rating = [DEFAULT_PROBLEM_RATING, 1200, 1600, 2000, 2400, 2800]
-        stars = mapping.get_value('gym-{}'.format(contest_id))
+        stars = Mapping.get_by_id('gym-{}'.format(contest_id))
         if stars is not None:
             return star_rating[int(stars)]
         url = 'https://codeforces.com/gyms'
@@ -60,13 +74,5 @@ class CodeforcesSpider(BaseSpider):
         })
         soup = BeautifulSoup(res.text, 'lxml')
         stars = len(soup.find('tr', {'data-contestid': contest_id}).findAll('img'))
-        mapping.set_value('gym-{}'.format(contest_id), str(stars))
+        Mapping.create(key='gym-{}'.format(contest_id), value=str(stars))
         return star_rating[stars]
-
-
-if __name__ == '__main__':
-    from app.models.oj_username import OJUsername
-
-    oj_username = OJUsername()
-    oj_username.oj_username = 'StupidTurtle'
-    print(CodeforcesSpider().get_user_info(oj_username))

@@ -1,0 +1,28 @@
+import json
+
+from app.spiders.codeforces_spider import CodeforcesSpider
+from app.test_base import client
+
+
+def test_codeforces_user_info(client):
+    from app.models.oj_username import OJUsername
+    oj_username = OJUsername()
+    oj_username.oj_username = 'taoting'
+
+    accept_problems = {}
+    res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
+    f = 0
+    for i in res:
+        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397-F' and i['accept_time'] == '2019-12-06 14:15:37':
+            f = 1
+            break
+    assert f
+
+    accept_problems = {'102397-F': '2019-12-06 14:15:37'}
+    res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
+    f = 0
+    for i in res:
+        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397-F' and i['accept_time'] == '2019-12-06 14:15:37':
+            f = 1
+            break
+    assert not f

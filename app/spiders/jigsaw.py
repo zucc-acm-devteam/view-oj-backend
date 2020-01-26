@@ -3,16 +3,17 @@ import random
 import time
 from io import BytesIO
 
-import cv2
-import numpy as np
 import requests
 from bs4 import BeautifulSoup
-from PIL import Image
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+import cv2
+import numpy as np
+from PIL import Image
 
 
 class Jigsaw:

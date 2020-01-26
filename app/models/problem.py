@@ -1,6 +1,6 @@
 import re
 
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String
 
 from app.models.base import Base
 from app.models.oj import OJ
@@ -9,10 +9,16 @@ from app.models.oj import OJ
 class Problem(Base):
     __tablename__ = 'problem'
 
+    fields = ['id', 'oj_id', 'oj', 'problem_pid', 'rating', 'url']
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     oj_id = Column(Integer, ForeignKey(OJ.id))
     problem_pid = Column(String(100), nullable=False)
     rating = Column(Integer, nullable=False)
+
+    @property
+    def oj(self):
+        return OJ.get_by_id(self.oj_id)
 
     @property
     def url(self):

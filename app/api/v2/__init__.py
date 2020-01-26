@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from app.api.v2 import session, user, oj_username
+from app.api.v2 import accept_problem, oj_username, session, user
 
 
 def create_blueprint_v2():
@@ -9,4 +9,5 @@ def create_blueprint_v2():
     user.api.register(bp_v2)
     session.api.register(bp_v2)
     oj_username.api.register(bp_v2)
+    accept_problem.api.register(bp_v2)
     return bp_v2

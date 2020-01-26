@@ -1,6 +1,6 @@
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
 
-from app.libs.error_code import Success, Forbidden
+from app.libs.error_code import Forbidden, Success
 from app.libs.red_print import RedPrint
 from app.models.oj_username import OJUsername
 from app.validators.oj_username import OJUsernameForm
