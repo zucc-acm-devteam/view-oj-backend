@@ -25,7 +25,9 @@ class CodeforcesSpider(BaseSpider):
             if rec['verdict'] == 'OK':
                 problem_pid = '{}-{}'.format(rec['problem']['contestId'], rec['problem']['index'])
                 accept_time = datetime.datetime.strftime(
-                    datetime.datetime.fromtimestamp(rec['creationTimeSeconds']), '%Y-%m-%d %H:%M:%S')
+                    datetime.datetime.fromtimestamp(rec['creationTimeSeconds'],
+                                                    datetime.timezone(datetime.timedelta(hours=8))),
+                    '%Y-%m-%d %H:%M:%S')
                 if accept_problems.get(problem_pid) == accept_time:
                     break
                 accept_problem_list.append({
