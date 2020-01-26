@@ -4,7 +4,6 @@ from sqlalchemy import Column, Integer, String, func
 
 from app import login_manager
 from app.libs.error_code import AuthFailed
-
 from app.models.base import Base, db
 
 

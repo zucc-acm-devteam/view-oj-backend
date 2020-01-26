@@ -16,4 +16,3 @@ class OJUsernameForm(BaseForm):
             raise ValidationError('OJ not exist')
         if oj.status != 1:
             raise ValidationError('OJ username not allow modify')
-

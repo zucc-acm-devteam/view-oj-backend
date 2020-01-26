@@ -1,6 +1,6 @@
 import json
 
-from ...test_base import client
+from app.test_base import client
 
 
 def create_session(client, username, password):
@@ -28,8 +28,8 @@ def modify_user(client, id_, **kwargs):
     return json.loads(res.data)
 
 
-def search_user(client):
-    res = client.get('/v2/user')
+def search_user(client, **kwargs):
+    res = client.get('/v2/user', json=kwargs)
     return json.loads(res.data)
 
 

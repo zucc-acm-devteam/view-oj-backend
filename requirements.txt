@@ -1,5 +1,4 @@
 pytest
-pyvirtualdisplay
 celery
 eventlet
 Flask
@@ -16,4 +15,3 @@ tenacity
 WTForms
 gunicorn
 beautifulsoup4
-selenium

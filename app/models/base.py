@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 from flask_sqlalchemy import BaseQuery
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
-from sqlalchemy import asc, desc, cast, Date
+from sqlalchemy import asc, desc
 
 
 class SQLAlchemy(_SQLAlchemy):
@@ -53,7 +53,10 @@ class Base(db.Model):
                     if hasattr(cls, key):
                         setattr(base, key, value)
             if hasattr(cls, 'create_time'):
-                setattr(base, 'create_time', datetime.datetime.now())
+                if kwargs.get('create_time'):
+                    setattr(base, 'create_time', kwargs['create_time'])
+                else:
+                    setattr(base, 'create_time', datetime.datetime.now())
             db.session.add(base)
         return base
 
@@ -70,7 +73,6 @@ class Base(db.Model):
 
     @classmethod
     def search(cls, **kwargs):
-        db.session.commit()
         res = cls.query
         for key, value in kwargs.items():
             if value is not None:
@@ -79,18 +81,19 @@ class Base(db.Model):
                         res = res.filter(getattr(cls, key).like('%' + value + '%'))
                     else:
                         res = res.filter(getattr(cls, key) == value)
-                if key == 'start_time':
-                    res = res.filter(cast(getattr(cls, 'create_time'), Date) >= value)
-                if key == 'end_time':
-                    res = res.filter(cast(getattr(cls, 'create_time'), Date) <= value)
+                if key == 'start_date':
+                    res = res.filter(getattr(cls, 'create_time') >= value)
+                if key == 'end_date':
+                    res = res.filter(getattr(cls, 'create_time') < value + datetime.timedelta(days=1))
 
         if kwargs.get('order'):
             for key, value in kwargs['order'].items():
                 if hasattr(cls, key):
                     if value == 'asc':
                         res = res.order_by(asc(getattr(cls, key)))
-                    elif value == 'desc':
+                    if value == 'desc':
                         res = res.order_by(desc(getattr(cls, key)))
+
         page = kwargs.get('page') if kwargs.get('page') else 1
         page_size = kwargs.get('page_size') if kwargs.get('page_size') else 20
         data = {

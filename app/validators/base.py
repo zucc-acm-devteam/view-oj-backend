@@ -1,7 +1,8 @@
 import datetime
+import json
 
 from flask import request
-from wtforms import Form, IntegerField, StringField, DateField
+from wtforms import DateField, Form, IntegerField, StringField
 from wtforms.validators import DataRequired, ValidationError
 
 from app.libs.error_code import ParameterException
@@ -48,8 +49,13 @@ class SearchForm(BaseForm):
 
     def validate_order(self, value):
         if self.order.data:
-            if self.order.data != 'asc' and self.order.data != 'desc':
-                raise ValidationError('Order must be `asc` or `desc`')
+            try:
+                self.order.data = json.loads(self.order.data)
+            except Exception:
+                raise ValidationError('Order must be dict')
+            for i in self.order.data.values():
+                if i not in ['asc', 'desc']:
+                    raise ValidationError('Order value must be `asc` or `desc`')
 
 
 class DateForm(Form):
