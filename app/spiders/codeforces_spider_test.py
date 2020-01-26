@@ -1,5 +1,3 @@
-import json
-
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.test_base import client
 
