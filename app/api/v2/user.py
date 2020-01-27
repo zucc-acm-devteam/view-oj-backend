@@ -37,7 +37,7 @@ def create_user_api():
 @login_required
 def modify_user_api(id_):
     form = ModifyUserForm().validate_for_api().data_
-    if current_user.permission != -1:
+    if current_user.permission != 1:
         if current_user.id != id_:
             raise Forbidden()
         if form['group'] or form['permission'] or form['status']:

@@ -21,7 +21,7 @@ def client():
             db.drop_all()
             db.create_all()
 
-            User.create(username='admin', nickname='admin', password='admin', permission=-1, status=1)
+            User.create(username='admin', nickname='admin', password='admin', permission=1, status=1)
             User.create(username='user', nickname='user', password='user', permission=0, status=0)
 
             OJ.create(name='test-oj1', status=1)

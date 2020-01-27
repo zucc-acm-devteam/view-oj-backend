@@ -8,7 +8,7 @@ from app.libs.error_code import Forbidden
 def admin_only(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        if current_user.permission != -1:
+        if current_user.permission != 1:
             raise Forbidden()
         return func(*args, **kwargs)
 
