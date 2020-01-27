@@ -44,4 +44,4 @@ def test_create_oj_username(client):
     assert get_user(client, 'admin')['data']['oj_username'][0]['oj_username'] is None
 
     # 修改不可修改的OJ
-    assert create_oj_username(client, 'admin', 2, '123')['code'] != 0
+    assert create_oj_username(client, 'admin', 3, '123')['code'] != 0
