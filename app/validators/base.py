@@ -3,7 +3,7 @@ import json
 
 from flask import request
 from wtforms import DateField, Form, IntegerField, StringField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import ValidationError
 
 from app.libs.error_code import ParameterException
 
