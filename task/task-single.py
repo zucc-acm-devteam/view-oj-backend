@@ -1,10 +1,13 @@
-from app import create_app
-from task.base import make_celery
+from celery import Celery
 
-app = create_app()
-celery = make_celery(app)
+from app import create_app
+
+celery = Celery('tasks-single')
+celery.config_from_object('app.config.setting')
+celery.config_from_object('app.config.secure')
 
 
 @celery.task
-def task_f(func, **kwargs):
-    return func(kwargs)
+def task_single_f(func, **kwargs):
+    with create_app().app_context():
+        func(kwargs)
