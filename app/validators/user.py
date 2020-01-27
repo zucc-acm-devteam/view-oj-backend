@@ -22,6 +22,7 @@ class ModifyUserForm(BaseForm):
 
 
 class SearchUserForm(SearchForm):
+    username = StringField()
     nickname = StringField()
     group = StringField()
     permission = IntegerField()
