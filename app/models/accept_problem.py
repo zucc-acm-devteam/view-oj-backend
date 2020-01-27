@@ -19,3 +19,10 @@ class AcceptProblem(Base):
     @property
     def problem(self):
         return Problem.get_by_id(self.problem_id)
+
+    @classmethod
+    def get_by_username_and_problem_id(cls, username, problem_id):
+        r = cls.search(username=username, problem_id=problem_id)
+        if r:
+            return r[0]
+        return cls.create(username=username, problem_id=problem_id)
