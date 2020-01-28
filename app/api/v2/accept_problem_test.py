@@ -16,7 +16,7 @@ def search_accept_problem(client, **kwargs):
     return json.loads(res.data)
 
 
-def test_accept_problem(client):
+def test_search_accept_problem(client):
     # 登录
     assert create_session(client, 'admin', 'admin')['code'] == 0
     # 搜索全部

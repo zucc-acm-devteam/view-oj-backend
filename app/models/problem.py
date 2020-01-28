@@ -35,3 +35,10 @@ class Problem(Base):
             return self.oj.url.format(self.problem_pid)
         except:
             return None
+
+    @classmethod
+    def get_by_oj_id_and_problem_pid(cls, oj_id, problem_pid):
+        r = cls.search(oj_id=oj_id, problem_pid=problem_pid)['data']
+        if r:
+            return r[0]
+        return cls.create(oj_id=oj_id, problem_pid=problem_pid, rating=0)

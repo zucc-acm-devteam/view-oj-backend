@@ -1,0 +1,40 @@
+import json
+import re
+
+from wtforms import StringField
+from wtforms.validators import DataRequired, ValidationError
+
+from app.validators.base import BaseForm
+
+
+class CreateProblemSetForm(BaseForm):
+    name = StringField(validators=[DataRequired(message='Username cannot be empty')])
+    problem_list = StringField(validators=[DataRequired(message='Problem list cannot be empty')])
+
+    def validate_problem_list(self, value):
+        try:
+            self.problem_list.data = json.loads(self.problem_list.data)
+            if not isinstance(self.problem_list.data, list):
+                raise Exception()
+        except Exception:
+            raise ValidationError('Problem list must be list')
+        for i in self.problem_list.data:
+            if re.match('[a-z_]+-.+', i) is None:
+                raise ValidationError('Problem format error')
+
+
+class ModifyProblemSetForm(BaseForm):
+    name = StringField()
+    problem_list = StringField()
+
+    def validate_problem_list(self, value):
+        if self.problem_list.data:
+            try:
+                self.problem_list.data = json.loads(self.problem_list.data)
+                if not isinstance(self.problem_list.data, list):
+                    raise Exception()
+            except Exception:
+                raise ValidationError('Problem list must be list')
+            for i in self.problem_list.data:
+                if re.match('[a-z_]+-.+', i) is None:
+                    raise ValidationError('Problem format error')

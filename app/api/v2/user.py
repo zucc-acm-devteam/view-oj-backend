@@ -11,12 +11,7 @@ api = RedPrint('user')
 
 
 @api.route("/<string:id_>", methods=['GET'])
-@login_required
 def get_user_api(id_):
-    if current_user.permission != -1:
-        if current_user.id != id_:
-            raise Forbidden()
-
     user = User.get_by_id(id_)
     if user is None:
         return NotFound('User not found')
@@ -42,7 +37,7 @@ def create_user_api():
 @login_required
 def modify_user_api(id_):
     form = ModifyUserForm().validate_for_api().data_
-    if current_user.permission != -1:
+    if current_user.permission != 1:
         if current_user.id != id_:
             raise Forbidden()
         if form['group'] or form['permission'] or form['status']:
@@ -57,7 +52,6 @@ def modify_user_api(id_):
 
 
 @api.route("", methods=['GET'])
-@admin_only
 def search_user_api():
     form = SearchUserForm().validate_for_api().data_
     res = User.search(**form)
