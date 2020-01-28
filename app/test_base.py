@@ -7,6 +7,8 @@ from app.models.accept_problem import AcceptProblem
 from app.models.oj import OJ
 from app.models.oj_username import OJUsername
 from app.models.problem import Problem
+from app.models.problem_relationship import ProblemRelationship
+from app.models.problem_set import ProblemSet
 from app.models.user import User
 
 
@@ -38,6 +40,11 @@ def client():
             AcceptProblem.create(username='user', problem_id=1, add_rating=5)
 
             OJUsername.create(username='admin', oj_id=2, oj_username='taoting')
+
+            ProblemSet.create(name='test-problem-set', problem_list=['hdu-1000', 'hdu-1001'])
+
+            ProblemRelationship.create(problem_set_id=1, problem_id=1)
+
         yield client
 
     db.session.remove()
