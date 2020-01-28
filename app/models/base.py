@@ -51,7 +51,10 @@ class Base(db.Model):
             for key, value in kwargs.items():
                 if value is not None:
                     if hasattr(cls, key):
-                        setattr(base, key, value)
+                        try:
+                            setattr(base, key, value)
+                        except:
+                            pass
             if hasattr(cls, 'create_time'):
                 if kwargs.get('create_time'):
                     setattr(base, 'create_time', kwargs['create_time'])
@@ -65,7 +68,10 @@ class Base(db.Model):
             for key, value in kwargs.items():
                 if value is not None:
                     if hasattr(self, key):
-                        setattr(self, key, value)
+                        try:
+                            setattr(self, key, value)
+                        except:
+                            pass
 
     def delete(self):
         with db.auto_commit():
