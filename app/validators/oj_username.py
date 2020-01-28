@@ -5,7 +5,7 @@ from app.models.oj import OJ
 from app.validators.base import BaseForm
 
 
-class OJUsernameForm(BaseForm):
+class CreateOJUsernameForm(BaseForm):
     oj_id = IntegerField(validators=[DataRequired(message='OJ id cannot be empty')])
     username = StringField(validators=[DataRequired(message='Username cannot be empty')])
     oj_username = StringField()
