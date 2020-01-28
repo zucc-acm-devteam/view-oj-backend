@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from app.libs.error_code import Forbidden, Success
 from app.libs.red_print import RedPrint
 from app.models.oj_username import OJUsername
-from app.validators.oj_username import OJUsernameForm
+from app.validators.oj_username import CreateOJUsernameForm
 
 api = RedPrint('oj_username')
 
@@ -12,7 +12,7 @@ api = RedPrint('oj_username')
 @login_required
 def create_oj_username():
     # 创建 修改 删除
-    form = OJUsernameForm().validate_for_api().data_
+    form = CreateOJUsernameForm().validate_for_api().data_
     if current_user.permission != -1:
         if current_user.id != form['username']:
             raise Forbidden()
