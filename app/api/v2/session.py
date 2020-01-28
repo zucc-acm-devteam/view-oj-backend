@@ -12,9 +12,11 @@ api = RedPrint('session')
 @api.route("", methods=['GET'])
 @login_required
 def get_session_api():
+    user = current_user
+    user.fields = ['username', 'nickname', 'group', 'permission', 'status']
     return jsonify({
         'code': 0,
-        'data': current_user
+        'data': user
     })
 
 
