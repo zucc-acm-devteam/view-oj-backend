@@ -6,7 +6,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECRET_KEY = 'view-oj'
 
 # 定义celery信息
-BROKER_URL = 'redis://127.0.0.1:6379/0'
+BROKER_URL = 'sqla+sqlite:///view-oj.db'
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'

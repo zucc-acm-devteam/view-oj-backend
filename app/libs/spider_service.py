@@ -24,11 +24,17 @@ from app.spiders.codeforces_spider import CodeforcesSpider
 # from app.spiders.zucc_spider import ZuccSpider
 
 
-def task_crawl_accept_problem():
+def task_crawl_accept_problem(username=None, oj_id=None):
     from task.task import task_f
     from task.task_single import task_single_f
-    user_list = User.search(status=1, page_size=1000)['data']
-    oj_id_list = OJ.search(status=1, page_size=100)['data']
+    if username:
+        user_list = [User.get_by_id(username)]
+    else:
+        user_list = User.search(status=1, page_size=1000)['data']
+    if oj_id:
+        oj_id_list = [OJ.get_by_id(oj_id)]
+    else:
+        oj_id_list = OJ.search(status=1, page_size=100)['data']
 
     for user in user_list:
         for oj in oj_id_list:
@@ -39,13 +45,18 @@ def task_crawl_accept_problem():
 
 
 def crawl_accept_problem(username, oj_id):
-    oj_name = OJ.get_by_id(oj_id).name
+    user = User.get_by_id(username)
+    if not user:
+        return
+    oj = OJ.get_by_id(oj_id)
+    if not oj:
+        return
     oj_username = OJUsername.search(username=username, oj_id=oj_id)['data']
     if not oj_username:
         return
 
     oj_username = oj_username[0]
-    oj_spider: BaseSpider = globals()[oj_name.title() + 'Spider']
+    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
 
     accept_problems = dict()
 
