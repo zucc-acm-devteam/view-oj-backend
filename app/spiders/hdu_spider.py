@@ -13,8 +13,7 @@ class HduSpider(BaseSpider):
         username = oj_username.oj_username
         url = 'http://acm.hdu.edu.cn/status.php?user={}'.format(username)
         accept_problem_list = []
-        ac_times = [i['accept_time'] for i in accept_problems]
-        ac_problems = [i['problem_pid'] for i in accept_problems]
+        accept_problem_dict = {}
         finished = False
         while True:
             res = SpiderHttp().get(url=url)
@@ -26,17 +25,10 @@ class HduSpider(BaseSpider):
                 if tds[2].text == 'Accepted':
                     accept_time = tds[1].text
                     problem_pid = tds[3].text
-                    if accept_time in ac_times:
+                    if accept_problems.get('hdu-' + problem_pid) == accept_time:
                         finished = True
                         break
-                    if problem_pid in ac_problems:
-                        continue
-                    ac_problems.append(problem_pid)
-                    accept_problem_list.append({
-                        'oj': 'hdu',
-                        'problem_pid': problem_pid,
-                        'accept_time': accept_time
-                    })
+                    accept_problem_dict[problem_pid] = accept_time
             if finished:
                 break
             next_page = soup.find('a', {'href': re.compile(r'.*first=[0-9].*')})
@@ -44,7 +36,11 @@ class HduSpider(BaseSpider):
                 url = 'http://acm.hdu.edu.cn' + next_page['href']
             else:
                 break
-
+        accept_problem_list = [{
+            'oj': 'hdu',
+            'problem_pid': problem_pid,
+            'accept_time': accept_time
+        } for problem_pid, accept_time in accept_problem_dict.items()]
         return accept_problem_list
 
     def get_problem_info(self, problem_id):
