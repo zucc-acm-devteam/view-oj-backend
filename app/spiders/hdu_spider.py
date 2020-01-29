@@ -12,7 +12,6 @@ class HduSpider(BaseSpider):
     def get_user_info(cls, oj_username, accept_problems):
         username = oj_username.oj_username
         url = 'http://acm.hdu.edu.cn/status.php?user={}'.format(username)
-        accept_problem_list = []
         accept_problem_dict = {}
         finished = False
         while True:
