@@ -8,6 +8,7 @@ SECRET_KEY = 'view-oj'
 # 定义celery信息
 BROKER_URL = 'sqla+sqlite:///view-oj.db'
 CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_ACCEPT_CONTENT = ['pickle']
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
 

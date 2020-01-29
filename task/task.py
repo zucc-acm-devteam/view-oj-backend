@@ -1,7 +1,8 @@
-from celery import Celery
+from celery import Celery, platforms
 
 from app.libs.spider_service import task_crawl_accept_problem
 
+platforms.C_FORCE_ROOT = True
 celery = Celery('tasks')
 celery.config_from_object('app.config.setting')
 celery.config_from_object('app.config.secure')
@@ -18,4 +19,4 @@ def setup_periodic_tasks(sender, **kwargs):
 def task_f(func, **kwargs):
     from app import create_app
     with create_app().app_context():
-        func(kwargs)
+        func(**kwargs)
