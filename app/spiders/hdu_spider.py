@@ -16,10 +16,7 @@ class HduSpider(BaseSpider):
         ac_times = [i['accept_time'] for i in accept_problems]
         ac_problems = [i['problem_pid'] for i in accept_problems]
         finished = False
-        page = 1
         while True:
-            print(page)
-            page = page + 1
             res = SpiderHttp().get(url=url)
             soup = BeautifulSoup(res.text, 'lxml')
             table = soup.find_all('table', {'class': 'table_text'})[0]
@@ -42,9 +39,9 @@ class HduSpider(BaseSpider):
                     })
             if finished:
                 break
-            nextpage = soup.find('a', {'href': re.compile(r'.*first=[0-9].*')})
-            if nextpage:
-                url = 'http://acm.hdu.edu.cn' + nextpage['href']
+            next_page = soup.find('a', {'href': re.compile(r'.*first=[0-9].*')})
+            if next_page:
+                url = 'http://acm.hdu.edu.cn' + next_page['href']
             else:
                 break
 
