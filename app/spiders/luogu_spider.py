@@ -52,9 +52,10 @@ class LuoguSpider(BaseSpider):
             raise Exception('problem can not resolve')
         return real_oj_name, problem_pid
 
-    def get_user_info(self, oj_username, accept_problems):
+    @classmethod
+    def get_user_info(cls, oj_username, accept_problems):
         username = oj_username.oj_username
-        uid = self._get_user_id(username)
+        uid = cls._get_user_id(username)
         if uid is None:
             return []
         url = 'https://www.luogu.com.cn/user/{}'.format(uid)
@@ -65,7 +66,7 @@ class LuoguSpider(BaseSpider):
 
         accept_problem_list = []
         for problem in res_json.get('currentData', dict()).get('passedProblems', dict()):
-            real_oj, problem_pid = self._change_problem_pid(problem['pid'])
+            real_oj, problem_pid = cls._change_problem_pid(problem['pid'])
             accept_problem_list.append({
                 'oj': real_oj,
                 'problem_pid': problem_pid,
@@ -73,7 +74,8 @@ class LuoguSpider(BaseSpider):
             })
         return accept_problem_list
 
-    def get_problem_info(self, problem_id):
+    @classmethod
+    def get_problem_info(cls, problem_id):
         url = 'https://www.luogu.com.cn/problem/P{}'.format(problem_id)
         res = LuoguHttp().get(url=url)
 

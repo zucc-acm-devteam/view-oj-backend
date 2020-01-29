@@ -42,7 +42,8 @@ class HduSpider(BaseSpider):
         } for problem_pid, accept_time in accept_problem_dict.items()]
         return accept_problem_list
 
-    def get_problem_info(self, problem_id):
+    @classmethod
+    def get_problem_info(cls, problem_id):
         url = 'http://acm.hdu.edu.cn/showproblem.php?pid={}'.format(problem_id)
         res = SpiderHttp().get(url=url)
         try:
