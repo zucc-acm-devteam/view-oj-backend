@@ -1,6 +1,5 @@
 import json
 import re
-import execjs
 from urllib.parse import unquote
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
