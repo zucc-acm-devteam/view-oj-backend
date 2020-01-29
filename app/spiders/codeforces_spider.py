@@ -28,7 +28,7 @@ class CodeforcesSpider(BaseSpider):
                     datetime.datetime.fromtimestamp(rec['creationTimeSeconds'],
                                                     datetime.timezone(datetime.timedelta(hours=8))),
                     '%Y-%m-%d %H:%M:%S')
-                if accept_problems.get(problem_pid) == accept_time:
+                if accept_problems.get("codeforces-{}".format(problem_pid)) == accept_time:
                     break
                 accept_problem_list.append({
                     'oj': 'codeforces',
