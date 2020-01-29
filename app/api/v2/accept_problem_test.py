@@ -16,6 +16,11 @@ def search_accept_problem(client, **kwargs):
     return json.loads(res.data)
 
 
+def search_accept_problem_summary(client, **kwargs):
+    res = client.get('/v2/accept_problem/summary', json=kwargs)
+    return json.loads(res.data)
+
+
 def test_search_accept_problem(client):
     # 登录
     assert create_session(client, 'admin', 'admin')['code'] == 0
@@ -40,3 +45,10 @@ def test_search_accept_problem(client):
     assert search_accept_problem(client, order=json.dumps({
         'id': 'desc'
     }))['data']['data'][0]['id'] == 3
+
+
+def test_search_accept_problem_summary(client):
+    # 获取时间段
+    assert search_accept_problem_summary(client, start_date="2018-01-01", end_date="2020-01-01")['data'][0]['num'] == 1
+    # 获取时间段
+    assert search_accept_problem_summary(client, start_date="2018-01-01", end_date="2021-01-01")['data'][0]['num'] == 2
