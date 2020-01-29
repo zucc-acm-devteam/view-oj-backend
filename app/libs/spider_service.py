@@ -3,10 +3,10 @@ import datetime
 from app.models.accept_problem import AcceptProblem
 from app.models.oj import OJ
 from app.models.oj_username import OJUsername
+from app.models.problem import Problem
 from app.spiders.base_spider import BaseSpider
+# 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
-
-
 # from app.spiders.hdu_spider import HduSpider
 # from app.spiders.hysbz_spider import HysbzSpider
 # from app.spiders.jisuanke_spider import JisuankeSpider
@@ -53,7 +53,10 @@ def crawl_accept_problem(username, oj_id):
                 deduplication_accept_problem.append(i)
 
     for i in deduplication_accept_problem:
-        pass
+        oj = OJ.get_by_name(i['name'])
+        problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
+        accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
+        accept_problem.modify(create_time=i['accept_time'])
 
 
 if __name__ == '__main__':
