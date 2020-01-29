@@ -27,6 +27,8 @@ def test_codeforces_user_info(client):
 
 
 def test_codeforces_problem_info(client):
+    from app import create_app
+    create_app().app_context().push()
     # 题目
     assert CodeforcesSpider.get_problem_info('1272F')['rating'] == 2400
     # gym
