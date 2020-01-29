@@ -58,7 +58,7 @@ class SearchForm(BaseForm):
                     raise ValidationError('Order value must be `asc` or `desc`')
 
 
-class DateForm(Form):
+class DateForm(BaseForm):
     start_date = DateField()
     end_date = DateField()
 

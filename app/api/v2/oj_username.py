@@ -26,4 +26,4 @@ def create_oj_username():
             oj_username.delete()
     else:
         OJUsername.create(oj_id=form['oj_id'], username=form['username'], oj_username=form['oj_username'])
-    return Success('OJ username has been created')
+    raise Success('OJ username has been created')
