@@ -23,7 +23,7 @@ class CodeforcesSpider(BaseSpider):
         res = res['result']
         for rec in res:
             if rec['verdict'] == 'OK':
-                problem_pid = '{}-{}'.format(rec['problem']['contestId'], rec['problem']['index'])
+                problem_pid = '{}{}'.format(rec['problem']['contestId'], rec['problem']['index'])
                 accept_time = datetime.datetime.strftime(
                     datetime.datetime.fromtimestamp(rec['creationTimeSeconds'],
                                                     datetime.timezone(datetime.timedelta(hours=8))),
