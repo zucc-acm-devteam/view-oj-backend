@@ -46,8 +46,7 @@ class User(UserMixin, Base):
                     last_success_time = j.last_success_time
                     break
             r.append({
-                'oj_id': i.id,
-                'oj_name': i.name,
+                'oj': i,
                 'oj_username': oj_username,
                 'last_success_time': last_success_time
             })
