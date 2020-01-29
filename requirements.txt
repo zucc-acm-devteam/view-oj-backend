@@ -7,7 +7,6 @@ Flask-SQLAlchemy
 Flask-redis
 lxml
 parsel
-PyExecJS
 PyMySQL
 requests
 tenacity
