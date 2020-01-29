@@ -55,11 +55,20 @@ class User(UserMixin, Base):
 
     @property
     def problem_distributed(self):
+        from app.models.accept_problem import AcceptProblem
         from app.models.oj import OJ
+        from app.models.problem import Problem
+        res = []
         oj_list = OJ.search(page_size=1000)['data']
         for i in oj_list:
-            pass
-        pass
+            res.append({
+                'oj': i,
+                'num': AcceptProblem.query.filter(
+                    AcceptProblem.username == self.username,
+                    AcceptProblem.problem_id.in_(db.session.query(Problem.id).filter_by(oj_id=i.id).subquery())
+                ).count()
+            })
+        return res
 
     def check_password(self, password):
         return self.password == password

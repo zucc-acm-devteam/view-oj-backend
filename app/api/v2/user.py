@@ -17,7 +17,7 @@ def get_user_api(id_):
         raise NotFound('User not found')
 
     fields = User.fields.copy()
-    fields.extend(['rating', 'oj_username'])
+    fields.extend(['rating', 'oj_username', 'problem_distributed'])
     user.fields = fields
     return jsonify({
         "code": 0,
