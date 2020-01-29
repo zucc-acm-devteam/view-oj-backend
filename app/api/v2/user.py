@@ -14,7 +14,11 @@ api = RedPrint('user')
 def get_user_api(id_):
     user = User.get_by_id(id_)
     if user is None:
-        return NotFound('User not found')
+        raise NotFound('User not found')
+
+    fields = User.fields.copy()
+    fields.extend(['rating', 'oj_username'])
+    user.fields = fields
     return jsonify({
         "code": 0,
         "data": user
@@ -30,7 +34,7 @@ def create_user_api():
     form['permission'] = 0
     form['status'] = 1
     User.create(**form)
-    return CreateSuccess('User has been created')
+    raise CreateSuccess('User has been created')
 
 
 @api.route("/<string:id_>", methods=['PATCH'])
@@ -45,21 +49,16 @@ def modify_user_api(id_):
 
     user = User.get_by_id(id_)
     if user is None:
-        return NotFound('User not found')
+        raise NotFound('User not found')
 
     user.modify(**form)
-    return Success('User has been modified')
+    raise Success('User has been modified')
 
 
 @api.route("", methods=['GET'])
 def search_user_api():
     form = SearchUserForm().validate_for_api().data_
     res = User.search(**form)
-    fields = User.fields.copy()
-    fields.remove('rating')
-    fields.remove('oj_username')
-    for user in res['data']:
-        user.fields = fields
     return jsonify({
         'code': 0,
         'data': res

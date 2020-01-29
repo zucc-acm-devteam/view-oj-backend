@@ -25,14 +25,14 @@ def create_session_api():
     form = LoginForm().validate_for_api().data_
     user = User.get_by_id(form['username'])
     if user is None:
-        return AuthFailed('User not found')
+        raise AuthFailed('User not found')
     if not user.check_password(form['password']):
         raise AuthFailed('Wrong username or password')
     login_user(user, remember=True)
-    return Success('Login successful')
+    raise Success('Login successful')
 
 
 @api.route("", methods=['DELETE'])
 def delete_session_api():
     logout_user()
-    return DeleteSuccess('Logout successful')
+    raise DeleteSuccess('Logout successful')

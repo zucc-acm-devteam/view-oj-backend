@@ -10,7 +10,7 @@ from app.models.base import Base, db
 class User(UserMixin, Base):
     __tablename__ = 'user'
 
-    fields = ['username', 'nickname', 'group', 'permission', 'status', 'rating', 'oj_username']
+    fields = ['username', 'nickname', 'group', 'permission', 'status']
 
     username = Column(String(100), primary_key=True)
     nickname = Column(String(100), nullable=False)
@@ -52,6 +52,14 @@ class User(UserMixin, Base):
                 'last_success_time': last_success_time
             })
         return r
+
+    @property
+    def problem_distributed(self):
+        from app.models.oj import OJ
+        oj_list = OJ.search(page_size=1000)['data']
+        for i in oj_list:
+            pass
+        pass
 
     def check_password(self, password):
         return self.password == password
