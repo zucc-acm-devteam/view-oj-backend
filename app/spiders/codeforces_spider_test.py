@@ -11,7 +11,7 @@ def test_codeforces_user_info(client):
     res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
     f = 0
     for i in res:
-        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397-F' and i['accept_time'] == '2019-12-06 14:15:37':
+        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397F' and i['accept_time'] == '2019-12-06 14:15:37':
             f = 1
             break
     assert f
@@ -20,7 +20,7 @@ def test_codeforces_user_info(client):
     res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
     f = 0
     for i in res:
-        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397-F' and i['accept_time'] == '2019-12-06 14:15:37':
+        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397F' and i['accept_time'] == '2019-12-06 14:15:37':
             f = 1
             break
     assert not f
