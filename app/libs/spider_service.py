@@ -55,10 +55,10 @@ def crawl_accept_problem(username, oj_id):
                 deduplication_accept_problem.append(i)
 
     for i in deduplication_accept_problem:
-        oj = OJ.get_by_name(i['name'])
+        oj = OJ.get_by_name(i['oj'])
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
-        accept_problem.modify(create_time=i['accept_time'])
+        accept_problem.modify(create_time=datetime.datetime.strptime(i['accept_time'], "%Y-%m-%d %H:%M:%S"))
 
 
 if __name__ == '__main__':
