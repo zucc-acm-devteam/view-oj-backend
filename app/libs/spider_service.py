@@ -4,6 +4,7 @@ from app.models.accept_problem import AcceptProblem
 from app.models.oj import OJ
 from app.models.oj_username import OJUsername
 from app.models.problem import Problem
+from app.models.user import User
 from app.spiders.base_spider import BaseSpider
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
@@ -21,6 +22,20 @@ from app.spiders.codeforces_spider import CodeforcesSpider
 # from app.spiders.vjudge_spider import VjudgeSpider
 # from app.spiders.zoj_spider import ZojSpider
 # from app.spiders.zucc_spider import ZuccSpider
+
+
+def task_crawl_accept_problem():
+    from task.task import task_f
+    from task.task_single import task_single_f
+    user_list = User.search(status=1, page_size=1000)['data']
+    oj_id_list = OJ.search(status=1, page_size=100)['data']
+
+    for user in user_list:
+        for oj in oj_id_list:
+            if oj.name == 'pintia':
+                task_single_f.delay(crawl_accept_problem, username=user.username, oj_id=oj.id)
+            else:
+                task_f.delay(crawl_accept_problem, username=user.username, oj_id=oj.id)
 
 
 def crawl_accept_problem(username, oj_id):
@@ -59,11 +74,3 @@ def crawl_accept_problem(username, oj_id):
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
         accept_problem.modify(create_time=datetime.datetime.strptime(i['accept_time'], "%Y-%m-%d %H:%M:%S"))
-
-
-if __name__ == '__main__':
-    from app import create_app
-
-    create_app().app_context().push()
-
-    crawl_accept_problem('admin', 2)
