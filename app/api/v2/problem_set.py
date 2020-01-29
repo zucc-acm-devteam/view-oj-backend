@@ -16,6 +16,9 @@ def get_problem_set_api(id_):
     if problem_set is None:
         raise NotFound('Problem set not found')
 
+    fields = problem_set.fields.copy()
+    fields.extend(['problem_list', 'detail'])
+    problem_set.fields = fields
     return jsonify({
         "code": 0,
         "data": problem_set

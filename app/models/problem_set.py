@@ -6,7 +6,7 @@ from app.models.base import Base
 class ProblemSet(Base):
     __tablename__ = 'problem_set'
 
-    fields = ['id', 'name', 'problem_list', 'create_time']
+    fields = ['id', 'name']
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
@@ -20,6 +20,21 @@ class ProblemSet(Base):
         for i in ProblemRelationship.search(problem_set_id=self.id, page_size=1000)['data']:
             r.append(Problem.get_by_id(i.problem_id))
         return r
+
+    @property
+    def detail(self):
+        from app.models.accept_problem import AcceptProblem
+        from app.models.user import User
+        res = []
+        user_list = User.search(status=1, page_size=1000)['data']
+        for i in user_list:
+            res.append({
+                'user': i,
+                'data': AcceptProblem.query.filter(
+                    AcceptProblem.username == i.username,
+                    AcceptProblem.problem_id.in_([i.id for i in self.problem_list])).all()
+            })
+        return res
 
     @classmethod
     def create(cls, **kwargs):
