@@ -16,7 +16,7 @@ def test_codeforces_user_info(client):
             break
     assert f
 
-    accept_problems = {'102397-F': '2019-12-06 14:15:37'}
+    accept_problems = {'102397F': '2019-12-06 14:15:37'}
     res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
     f = 0
     for i in res:
