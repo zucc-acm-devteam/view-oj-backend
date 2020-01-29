@@ -2,7 +2,8 @@ from flask import jsonify
 
 from app.libs.red_print import RedPrint
 from app.models.accept_problem import AcceptProblem
-from app.validators.accept_problem import SearchAcceptProblemForm, SearchAcceptProblemSummaryForm
+from app.validators.accept_problem import (SearchAcceptProblemForm,
+                                           SearchAcceptProblemSummaryForm)
 
 api = RedPrint('accept_problem')
 

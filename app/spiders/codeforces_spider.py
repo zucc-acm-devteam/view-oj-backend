@@ -5,9 +5,9 @@ import re
 from bs4 import BeautifulSoup
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.spider_http import SpiderHttp
 from app.models.mapping import Mapping
 from app.spiders.base_spider import BaseSpider
-from app.libs.spider_http import SpiderHttp
 
 
 class CodeforcesSpider(BaseSpider):

@@ -7,6 +7,8 @@ from app.models.problem import Problem
 from app.spiders.base_spider import BaseSpider
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
+
+
 # from app.spiders.hdu_spider import HduSpider
 # from app.spiders.hysbz_spider import HysbzSpider
 # from app.spiders.jisuanke_spider import JisuankeSpider
