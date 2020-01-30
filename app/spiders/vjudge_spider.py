@@ -83,6 +83,8 @@ class VjudgeSpider(BaseSpider):
             name = 'poj'
         elif name == '计蒜客':
             name = 'jisuanke'
+        elif name == 'uvalive':
+            name = 'uva'
         return name
 
     @classmethod
