@@ -26,3 +26,13 @@ def test_create_task(client):
     }))['code'] == 0
     # 创建多个craw_user_info任务
     assert create_task(client, type='craw_user_info')['code'] == 0
+    # 创建单个craw_problem_info任务
+    assert create_task(client, type='craw_problem_info', kwargs=json.dumps({
+        'problem_id': 1
+    }))['code'] == 0
+    # 创建单个calculate_user_rating任务
+    assert create_task(client, type='calculate_user_rating', kwargs=json.dumps({
+        'username': 'admin'
+    }))['code'] == 0
+    # 创建多个calculate_user_rating任务
+    assert create_task(client, type='calculate_user_rating')['code'] == 0

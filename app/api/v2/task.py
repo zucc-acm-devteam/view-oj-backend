@@ -22,7 +22,7 @@ def create_task_api():
             task_crawl_accept_problem()
     elif form['type'] == 'craw_problem_info':
         task_crawl_problem_rating(form['kwargs']['problem_id'])
-    elif form['calculate_user_rating']:
+    elif form['type'] == 'calculate_user_rating':
         if form['kwargs']:
             task_calculate_user_rating(form['kwargs']['username'])
         else:
