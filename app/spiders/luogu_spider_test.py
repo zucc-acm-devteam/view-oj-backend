@@ -11,7 +11,7 @@ def test_luogu_user_info(client):
     accept_problems = {}
     res = LuoguSpider.get_user_info(oj_username, accept_problems)
     f = 0
-    for i in res:
+    for i in res['data']:
         if i['oj'] == 'luogu' and i['problem_pid'] == '1001' and i['accept_time'] is None:
             f = 1
             break
@@ -22,7 +22,7 @@ def test_luogu_user_info(client):
     accept_problems = {}
     res = LuoguSpider.get_user_info(oj_username, accept_problems)
     f = 0
-    for i in res:
+    for i in res['data']:
         if i['oj'] == 'luogu' and i['problem_pid'] == '1001' and i['accept_time'] is None:
             f = 1
             break

@@ -64,14 +64,16 @@ class LuoguSpider(BaseSpider):
         res_json = json.loads(res_str)
 
         accept_problem_list = []
+        success = False
         for problem in res_json.get('currentData', dict()).get('passedProblems', dict()):
+            success = True
             real_oj, problem_pid = cls._change_problem_pid(problem['pid'])
             accept_problem_list.append({
                 'oj': real_oj,
                 'problem_pid': problem_pid,
                 'accept_time': None
             })
-        return accept_problem_list
+        return {'success': success, 'data': accept_problem_list}
 
     @classmethod
     def get_problem_info(cls, problem_id):
