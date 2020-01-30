@@ -35,7 +35,7 @@ class LuoguSpider(BaseSpider):
 
     @staticmethod
     def _change_problem_pid(problem_pid: str) -> (str, str):
-        if problem_pid[0] == 'P':
+        if problem_pid[0] == 'P' or problem_pid[0] == 'T':
             real_oj_name = 'luogu'
             problem_pid = problem_pid[1:]
         elif problem_pid[0] == 'C':
