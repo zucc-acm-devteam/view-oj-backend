@@ -73,6 +73,7 @@ def crawl_accept_problem(username, oj_id):
             if accept_problems.get(pid) is None:
                 deduplication_accept_problem.append(i)
 
+    print(len(deduplication_accept_problem))
     for i in deduplication_accept_problem:
         oj = OJ.get_by_name(i['oj'])
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
@@ -89,6 +90,10 @@ def task_crawl_problem_rating(problem_id):
 def crawl_problem_rating(problem_id):
     problem = Problem.get_by_id(problem_id)
     oj = OJ.get_by_id(problem.oj_id)
-    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
+    try:
+        oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
+    except:
+        return
+
     rating = oj_spider.get_problem_info(problem.problem_pid)['rating']
     problem.modify(rating=rating)
