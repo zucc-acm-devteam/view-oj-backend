@@ -1,7 +1,7 @@
 from flask import jsonify
 from flask_login import login_required
 
-from app import redis
+from app import redis1, redis2
 from app.libs.error_code import CreateSuccess
 from app.libs.red_print import RedPrint
 from app.libs.spider_service import task_crawl_accept_problem
@@ -28,8 +28,10 @@ def create_task_api():
 
 @api.route("/summary", methods=['GET'])
 def get_task_summary_api():
-    res = redis.llen('celery')
     return jsonify({
         'code': 0,
-        'data': res
+        'data': {
+            "redis1": redis1.llen('celery'),
+            "redis2": redis2.llen('celery')
+        }
     })

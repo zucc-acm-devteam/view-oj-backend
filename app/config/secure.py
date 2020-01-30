@@ -6,11 +6,13 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECRET_KEY = 'view-oj'
 
 # 定义celery信息
-BROKER_URL = 'sqla+sqlite:///view-oj.db'
+BROKER_1_URL = 'sqla+sqlite:///view-oj-celery1.db'
+BROKER_2_URL = 'sqla+sqlite:///view-oj-celery2.db'
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_ACCEPT_CONTENT = ['pickle']
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
 
 # 定义redis信息
-REDIS_URL = 'redis://127.0.0.1:6379/0'
+REDIS_1_URL = 'redis://127.0.0.1:6379/1'
+REDIS_2_URL = 'redis://127.0.0.1:6379/2'

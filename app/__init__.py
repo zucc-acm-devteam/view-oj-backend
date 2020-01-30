@@ -8,7 +8,8 @@ from .app import Flask
 
 cors = CORS(supports_credentials=True)
 login_manager = LoginManager()
-redis = FlaskRedis()
+redis1 = FlaskRedis(config_prefix="REDIS_1")
+redis2 = FlaskRedis(config_prefix="REDIS_2")
 
 
 def register_blueprints(flask_app):
@@ -32,7 +33,8 @@ def register_plugin(flask_app):
     login_manager.init_app(flask_app)
 
     # 注册redis
-    redis.init_app(flask_app)
+    redis1.init_app(flask_app)
+    redis2.init_app(flask_app)
 
 
 def create_app():
