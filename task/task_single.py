@@ -12,4 +12,5 @@ celery.conf['BROKER_URL'] = BROKER_2_URL
 def task_single_f(func, **kwargs):
     from app import create_app
     with create_app().app_context():
-        func(kwargs)
+        print(func, kwargs)
+        func(**kwargs)

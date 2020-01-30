@@ -24,4 +24,5 @@ def setup_periodic_tasks(sender, **kwargs):
 def task_f(func, **kwargs):
     from app import create_app
     with create_app().app_context():
+        print(func, kwargs)
         func(**kwargs)
