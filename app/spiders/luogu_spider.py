@@ -21,8 +21,8 @@ class LuoguHttp(SpiderHttp):
 
     @staticmethod
     def _end_request(res, encoding):
-        res.encoding = encoding
         time.sleep(2)
+        return res
 
 
 class LuoguSpider(BaseSpider):
