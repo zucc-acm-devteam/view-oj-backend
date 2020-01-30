@@ -8,20 +8,8 @@ from app.models.user import User
 from app.spiders.base_spider import BaseSpider
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
-
-
-# from app.spiders.hdu_spider import HduSpider
-# from app.spiders.hysbz_spider import HysbzSpider
-# from app.spiders.jisuanke_spider import JisuankeSpider
-# from app.spiders.loj_spider import LojSpider
-# from app.spiders.luogu_spider import LuoguSpider
-# from app.spiders.nit_spider import NitSpider
-# from app.spiders.nowcoder_spider import NowcoderSpider
-# from app.spiders.pintia_spider import PintiaSpider
-# from app.spiders.poj_spider import PojSpider
-# from app.spiders.vjudge_spider import VjudgeSpider
-# from app.spiders.zoj_spider import ZojSpider
-# from app.spiders.zucc_spider import ZuccSpider
+from app.spiders.hdu_spider import HduSpider
+from app.spiders.luogu_spider import LuoguSpider
 
 
 def task_crawl_accept_problem(username=None, oj_id=None):
@@ -45,6 +33,8 @@ def task_crawl_accept_problem(username=None, oj_id=None):
 
 
 def crawl_accept_problem(username, oj_id):
+    from task.task import task_f
+
     user = User.get_by_id(username)
     if not user:
         return
@@ -64,7 +54,10 @@ def crawl_accept_problem(username, oj_id):
         accept_problems["{}-{}".format(i.problem.oj.name, i.problem.problem_pid)] = \
             datetime.datetime.strftime(i.create_time, '%Y-%m-%d %H:%M:%S')
 
-    crawl_accept_problems = oj_spider.get_user_info(oj_username, accept_problems)
+    res = oj_spider.get_user_info(oj_username, accept_problems)
+    if res['success']:
+        oj_username.modify(last_success_time=datetime.datetime.now())
+    crawl_accept_problems = res['data']
 
     deduplication_accept_problem = list()
 
@@ -83,5 +76,14 @@ def crawl_accept_problem(username, oj_id):
     for i in deduplication_accept_problem:
         oj = OJ.get_by_name(i['oj'])
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
+        task_f.delay(crawl_problem_rating, problem_id=problem.id)
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
         accept_problem.modify(create_time=datetime.datetime.strptime(i['accept_time'], "%Y-%m-%d %H:%M:%S"))
+
+
+def crawl_problem_rating(problem_id):
+    problem = Problem.get_by_id(problem_id)
+    oj = OJ.get_by_id(problem.oj_id)
+    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
+    rating = oj_spider.get_problem_info(problem.problem_pid)['rating']
+    problem.modify(rating=rating)
