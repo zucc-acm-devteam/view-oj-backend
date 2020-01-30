@@ -1,8 +1,10 @@
 import json
 import re
+import time
 from urllib.parse import unquote
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.helper import timestamp_to_str
 from app.libs.spider_http import SpiderHttp
 from app.spiders.base_spider import BaseSpider
 
@@ -12,7 +14,8 @@ class LuoguHttp(SpiderHttp):
         super().__init__()
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
-            'host': 'www.luogu.com.cn'
+            'host': 'www.luogu.com.cn',
+            'cookie': '__client_id=22325e412138d36d1b4c9f11654aacbb061c9c81; _uid=62916;'
         }
         self.headers.update(headers)
 
@@ -56,23 +59,34 @@ class LuoguSpider(BaseSpider):
         username = oj_username.oj_username
         uid = cls._get_user_id(username)
         if uid is None:
-            return []
-        url = 'https://www.luogu.com.cn/user/{}'.format(uid)
-        res = LuoguHttp().get(url=url)
-        res_raw = re.search(r'decodeURIComponent\("(.*)"\)\);', res.text).group(1)
-        res_str = unquote(res_raw)
-        res_json = json.loads(res_str)
+            return {'success': False, 'data': []}
 
-        accept_problem_list = []
+        page = 1
+        finished = False
         success = False
-        for problem in res_json.get('currentData', dict()).get('passedProblems', dict()):
-            success = True
-            real_oj, problem_pid = cls._change_problem_pid(problem['pid'])
-            accept_problem_list.append({
-                'oj': real_oj,
-                'problem_pid': problem_pid,
-                'accept_time': None
-            })
+        accept_problem_list = []
+        while True:
+            url = 'https://www.luogu.com.cn/record/list?user={}&page={}&status=12&_contentOnly=1'.format(uid, page)
+            res = LuoguHttp().get(url=url).json()
+            for i in res['currentData']['records']['result']:
+                if i['status'] == 12:
+                    real_oj, problem_pid = cls._change_problem_pid(i['problem']['pid'])
+                    accept_time = timestamp_to_str(i['submitTime'])
+                    if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
+                        finished = True
+                        break
+                    accept_problem_list.append({
+                        'oj': real_oj,
+                        'problem_pid': problem_pid,
+                        'accept_time': accept_time
+                    })
+            if finished:
+                break
+            if len(res['currentData']['records']['result']) != 20:
+                break
+            page += 1
+            time.sleep(2)
+
         return {'success': success, 'data': accept_problem_list}
 
     @classmethod
