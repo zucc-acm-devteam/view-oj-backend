@@ -19,6 +19,11 @@ class LuoguHttp(SpiderHttp):
         }
         self.headers.update(headers)
 
+    @staticmethod
+    def _end_request(res, encoding):
+        res.encoding = encoding
+        time.sleep(2)
+
 
 class LuoguSpider(BaseSpider):
     @staticmethod
@@ -83,7 +88,6 @@ class LuoguSpider(BaseSpider):
             if len(res['currentData']['records']['result']) != 20:
                 break
             page += 1
-            time.sleep(2)
 
         return {'success': success, 'data': accept_problem_list}
 
