@@ -104,14 +104,3 @@ class VjudgeSpider(BaseSpider):
         url = 'https://vjudge.net/user/checkLogInStatus'
         res = cls.vjudge_http.post(url=url)
         return res.text == 'true'
-
-
-if __name__ == '__main__':
-    from app import create_app
-    from app.models.oj_username import OJUsername
-
-    create_app().app_context().push()
-    oj_username = OJUsername()
-    oj_username.oj_username = 'taoting'
-    r = VjudgeSpider.get_user_info(oj_username, {})
-    print(r)
