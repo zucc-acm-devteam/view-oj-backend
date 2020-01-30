@@ -33,8 +33,6 @@ def task_crawl_accept_problem(username=None, oj_id=None):
 
 
 def crawl_accept_problem(username, oj_id):
-    from task.task import task_f
-
     user = User.get_by_id(username)
     if not user:
         return
@@ -76,9 +74,14 @@ def crawl_accept_problem(username, oj_id):
     for i in deduplication_accept_problem:
         oj = OJ.get_by_name(i['oj'])
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
-        task_f.delay(crawl_problem_rating, problem_id=problem.id)
+        task_crawl_problem_rating(problem.id)
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
         accept_problem.modify(create_time=datetime.datetime.strptime(i['accept_time'], "%Y-%m-%d %H:%M:%S"))
+
+
+def task_crawl_problem_rating(problem_id):
+    from task.task import task_f
+    task_f.delay(crawl_problem_rating, problem_id=problem_id)
 
 
 def crawl_problem_rating(problem_id):
