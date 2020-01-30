@@ -19,9 +19,11 @@ class CodeforcesSpider(BaseSpider):
         res = SpiderHttp().get(url=url)
         res = json.loads(res.text)
         if res['status'] != 'OK':
-            return []
+            return {'success': False, 'data': []}
         res = res['result']
+        success = False
         for rec in res:
+            success = True
             if rec['verdict'] == 'OK':
                 problem_pid = '{}{}'.format(rec['problem']['contestId'], rec['problem']['index'])
                 accept_time = datetime.datetime.strftime(
@@ -35,7 +37,7 @@ class CodeforcesSpider(BaseSpider):
                     'problem_pid': problem_pid,
                     'accept_time': accept_time
                 })
-        return accept_problem_list
+        return {'success': success, 'data': accept_problem_list}
 
     @classmethod
     def get_problem_info(cls, problem_id):

@@ -10,7 +10,7 @@ def test_codeforces_user_info(client):
     accept_problems = {}
     res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
     f = 0
-    for i in res:
+    for i in res['data']:
         if i['oj'] == 'codeforces' and i['problem_pid'] == '102397F' and i['accept_time'] == '2019-12-06 14:15:37':
             f = 1
             break
@@ -19,7 +19,7 @@ def test_codeforces_user_info(client):
     accept_problems = {'codeforces-102397F': '2019-12-06 14:15:37'}
     res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
     f = 0
-    for i in res:
+    for i in res['data']:
         if i['oj'] == 'codeforces' and i['problem_pid'] == '102397F' and i['accept_time'] == '2019-12-06 14:15:37':
             f = 1
             break
