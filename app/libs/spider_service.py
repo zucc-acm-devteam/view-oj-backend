@@ -1,5 +1,6 @@
 import datetime
 
+from app.libs.helper import str_to_datetime
 from app.models.accept_problem import AcceptProblem
 from app.models.oj import OJ
 from app.models.oj_username import OJUsername
@@ -76,7 +77,7 @@ def crawl_accept_problem(username, oj_id):
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
         task_crawl_problem_rating(problem.id)
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
-        accept_problem.modify(create_time=datetime.datetime.strptime(i['accept_time'], "%Y-%m-%d %H:%M:%S"))
+        accept_problem.modify(create_time=str_to_datetime(i['accept_time']))
 
 
 def task_crawl_problem_rating(problem_id):
