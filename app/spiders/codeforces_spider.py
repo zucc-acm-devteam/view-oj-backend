@@ -59,8 +59,9 @@ class CodeforcesSpider(BaseSpider):
     @staticmethod
     def _get_gym_contest_rating(contest_id):
         star_rating = [DEFAULT_PROBLEM_RATING, 1200, 1600, 2000, 2400, 2800]
-        stars = Mapping.get_by_id('gym-{}'.format(contest_id))
-        if stars is not None:
+        mapping = Mapping.get_by_id('gym-{}'.format(contest_id))
+        stars = mapping.value
+        if stars:
             return star_rating[int(stars)]
         url = 'https://codeforces.com/gyms'
         req = SpiderHttp()
@@ -74,5 +75,5 @@ class CodeforcesSpider(BaseSpider):
         })
         soup = BeautifulSoup(res.text, 'lxml')
         stars = len(soup.find('tr', {'data-contestid': contest_id}).findAll('img'))
-        Mapping.create(key='gym-{}'.format(contest_id), value=str(stars))
+        mapping.modify(value=str(stars))
         return star_rating[stars]
