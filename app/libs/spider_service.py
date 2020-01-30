@@ -28,7 +28,7 @@ def task_crawl_accept_problem(username=None, oj_id=None):
 
     for user in user_list:
         for oj in oj_id_list:
-            if oj.name == 'pintia':
+            if oj.name in ['pintia', 'luogu']:
                 task_single_f.delay(crawl_accept_problem, username=user.username, oj_id=oj.id)
             else:
                 task_f.delay(crawl_accept_problem, username=user.username, oj_id=oj.id)
