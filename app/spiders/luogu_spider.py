@@ -69,6 +69,7 @@ class LuoguSpider(BaseSpider):
             url = 'https://www.luogu.com.cn/record/list?user={}&page={}&status=12&_contentOnly=1'.format(uid, page)
             res = LuoguHttp().get(url=url).json()
             for i in res['currentData']['records']['result']:
+                success = True
                 if i['status'] == 12:
                     real_oj, problem_pid = cls._change_problem_pid(i['problem']['pid'])
                     accept_time = timestamp_to_str(i['submitTime'])
