@@ -57,16 +57,13 @@ class LuoguSpider(BaseSpider):
     @classmethod
     def get_user_info(cls, oj_username, accept_problems):
         username = oj_username.oj_username
-        uid = cls._get_user_id(username)
-        if uid is None:
-            return {'success': False, 'data': []}
 
         page = 1
         finished = False
         success = False
         accept_problem_list = []
         while True:
-            url = 'https://www.luogu.com.cn/record/list?user={}&page={}&status=12&_contentOnly=1'.format(uid, page)
+            url = 'https://www.luogu.com.cn/record/list?user={}&page={}&status=12&_contentOnly=1'.format(username, page)
             res = LuoguHttp().get(url=url).json()
             for i in res['currentData']['records']['result']:
                 success = True
