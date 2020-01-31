@@ -12,6 +12,11 @@ from app.spiders.base_spider import BaseSpider
 class VjudgeHttp(SpiderHttp):
     def __init__(self):
         super().__init__()
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
+            'cookie': 'JSESSIONID=0874AE98CD2E34AD620F4F20753DD58F; Jax.Q=taoting|3CC7O8QU2Q7YEXCEYOQ255FLMPE7R3'
+        }
+        self.headers.update(headers)
 
 
 class VjudgeSpider(BaseSpider):
@@ -19,25 +24,6 @@ class VjudgeSpider(BaseSpider):
 
     @classmethod
     def get_user_info(cls, oj_username, accept_problems):
-        public_id = current_app.config['VJUDGE_ID']
-        public_password = current_app.config['VJUDGE_PASSWORD']
-        cookie_raw = Mapping.get_by_id('vjudge-cookie')
-        if not cls.check_cookie():
-            try:
-                cookie = json.loads(cookie_raw.value)
-                headers = {
-                    'Cookie': Cookie.dict_to_str(cookie)
-                }
-                cls.vjudge_http.headers.update(headers)
-                assert cls.check_cookie()
-            except:
-                cls.login(public_id, public_password)
-                assert cls.check_cookie()
-                r = {}
-                for i in cls.vjudge_http.sess.cookies:
-                    r[i.name] = i.value
-                cookie_raw.modify(value=json.dumps(r))
-
         username = oj_username.oj_username
         accept_problem_list = []
         max_id = ''
