@@ -50,7 +50,7 @@ def crawl_accept_problem(username, oj_id):
 
     accept_problems = dict()
 
-    for i in AcceptProblem.search(username=username)['data']:
+    for i in AcceptProblem.search(username=username, page_size=10000)['data']:
         accept_problems["{}-{}".format(i.problem.oj.name, i.problem.problem_pid)] = \
             datetime.datetime.strftime(i.create_time, '%Y-%m-%d %H:%M:%S')
 
