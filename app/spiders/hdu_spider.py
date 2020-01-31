@@ -15,6 +15,7 @@ class HduSpider(BaseSpider):
         url = 'http://acm.hdu.edu.cn/status.php?user={}'.format(username)
         accept_problem_dict = {}
         finished = False
+        success = False
         while True:
             res = SpiderHttp().get(url=url)
             soup = BeautifulSoup(res.text, 'lxml')
@@ -22,6 +23,7 @@ class HduSpider(BaseSpider):
             trs = table.find_all('tr')[1:]
             for tr in trs:
                 tds = tr.find_all('td')
+                success = True
                 if tds[2].text == 'Accepted':
                     accept_time = tds[1].text
                     problem_pid = tds[3].text
@@ -41,7 +43,7 @@ class HduSpider(BaseSpider):
             'problem_pid': problem_pid,
             'accept_time': accept_time
         } for problem_pid, accept_time in accept_problem_dict.items()]
-        return accept_problem_list
+        return {'success': success, 'data': accept_problem_list}
 
     @classmethod
     def get_problem_info(cls, problem_id):

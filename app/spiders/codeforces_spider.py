@@ -5,6 +5,7 @@ import re
 from bs4 import BeautifulSoup
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.helper import timestamp_to_str
 from app.libs.spider_http import SpiderHttp
 from app.models.mapping import Mapping
 from app.spiders.base_spider import BaseSpider
@@ -19,15 +20,14 @@ class CodeforcesSpider(BaseSpider):
         res = SpiderHttp().get(url=url)
         res = json.loads(res.text)
         if res['status'] != 'OK':
-            return []
+            return {'success': False, 'data': []}
         res = res['result']
+        success = False
         for rec in res:
+            success = True
             if rec['verdict'] == 'OK':
                 problem_pid = '{}{}'.format(rec['problem']['contestId'], rec['problem']['index'])
-                accept_time = datetime.datetime.strftime(
-                    datetime.datetime.fromtimestamp(rec['creationTimeSeconds'],
-                                                    datetime.timezone(datetime.timedelta(hours=8))),
-                    '%Y-%m-%d %H:%M:%S')
+                accept_time = timestamp_to_str(rec['creationTimeSeconds'])
                 if accept_problems.get("codeforces-{}".format(problem_pid)) == accept_time:
                     break
                 accept_problem_list.append({
@@ -35,7 +35,7 @@ class CodeforcesSpider(BaseSpider):
                     'problem_pid': problem_pid,
                     'accept_time': accept_time
                 })
-        return accept_problem_list
+        return {'success': success, 'data': accept_problem_list}
 
     @classmethod
     def get_problem_info(cls, problem_id):
@@ -59,8 +59,9 @@ class CodeforcesSpider(BaseSpider):
     @staticmethod
     def _get_gym_contest_rating(contest_id):
         star_rating = [DEFAULT_PROBLEM_RATING, 1200, 1600, 2000, 2400, 2800]
-        stars = Mapping.get_by_id('gym-{}'.format(contest_id))
-        if stars is not None:
+        mapping = Mapping.get_by_id('gym-{}'.format(contest_id))
+        stars = mapping.value
+        if stars:
             return star_rating[int(stars)]
         url = 'https://codeforces.com/gyms'
         req = SpiderHttp()
@@ -74,5 +75,5 @@ class CodeforcesSpider(BaseSpider):
         })
         soup = BeautifulSoup(res.text, 'lxml')
         stars = len(soup.find('tr', {'data-contestid': contest_id}).findAll('img'))
-        Mapping.create(key='gym-{}'.format(contest_id), value=str(stars))
+        mapping.modify(value=str(stars))
         return star_rating[stars]

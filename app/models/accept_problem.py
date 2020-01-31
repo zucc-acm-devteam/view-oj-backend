@@ -22,7 +22,7 @@ class AcceptProblem(Base):
 
     @classmethod
     def get_by_username_and_problem_id(cls, username, problem_id):
-        r = cls.search(username=username, problem_id=problem_id)
+        r = cls.search(username=username, problem_id=problem_id)['data']
         if r:
             return r[0]
-        return cls.create(username=username, problem_id=problem_id)
+        return cls.create(username=username, problem_id=problem_id, add_rating=0)

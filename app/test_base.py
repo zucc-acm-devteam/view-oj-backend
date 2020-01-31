@@ -1,6 +1,7 @@
 import datetime
 
 import pytest
+from celery import Celery
 
 from app import create_app, db
 from app.models.accept_problem import AcceptProblem
@@ -17,7 +18,7 @@ def client():
     app = create_app()
     app.testing = True
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = r"sqlite:///../view-oj.db"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///../view-oj.db"
 
     with app.test_client() as client:
         with app.app_context():

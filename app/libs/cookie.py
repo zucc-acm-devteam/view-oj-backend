@@ -1,7 +1,7 @@
 import os
 
 
-class Cookies:
+class Cookie:
     @staticmethod
     def list_to_dict(res: list) -> dict:
         res_dict = dict()
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         'a': 'b',
         'c': 'd'
     }
-    cookies_str = Cookies.dict_to_str(cookies_dict)
-    cookies_dict_tmp = Cookies.str_to_dict(cookies_str)
+    cookies_str = Cookie.dict_to_str(cookies_dict)
+    cookies_dict_tmp = Cookie.str_to_dict(cookies_str)
     assert cookies_dict == cookies_dict_tmp
     print(1)

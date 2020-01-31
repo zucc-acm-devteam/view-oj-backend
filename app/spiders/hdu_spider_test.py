@@ -10,7 +10,7 @@ def test_hdu_user_info(client):
     accept_problems = {}
     res = HduSpider.get_user_info(oj_username, accept_problems)
     f = 0
-    for i in res:
+    for i in res['data']:
         if i['oj'] == 'hdu' and i['problem_pid'] == '6703' and i['accept_time'] == '2019-08-24 10:39:31':
             f = 1
             break
@@ -19,7 +19,7 @@ def test_hdu_user_info(client):
     accept_problems = {'hdu-6703': '2019-08-24 10:39:31'}
     res = HduSpider.get_user_info(oj_username, accept_problems)
     f = 0
-    for i in res:
+    for i in res['data']:
         if i['oj'] == 'hdu' and i['problem_pid'] == '6703' and i['accept_time'] == '2019-08-24 10:39:31':
             f = 1
             break
