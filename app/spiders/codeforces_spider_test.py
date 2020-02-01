@@ -7,23 +7,19 @@ def test_codeforces_user_info(client):
     oj_username = OJUsername()
     oj_username.oj_username = 'taoting'
 
+    test_data = {
+        'oj': 'codeforces',
+        'problem_pid': '102397F',
+        'accept_time': '2019-12-06 14:15:37'
+    }
     accept_problems = {}
     res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
-    f = 0
-    for i in res['data']:
-        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397F' and i['accept_time'] == '2019-12-06 14:15:37':
-            f = 1
-            break
-    assert f
+    assert test_data in res['data']
 
     accept_problems = {'codeforces-102397F': '2019-12-06 14:15:37'}
     res = CodeforcesSpider.get_user_info(oj_username, accept_problems)
-    f = 0
-    for i in res['data']:
-        if i['oj'] == 'codeforces' and i['problem_pid'] == '102397F' and i['accept_time'] == '2019-12-06 14:15:37':
-            f = 1
-            break
-    assert not f
+
+    assert test_data not in res['data']
 
 
 def test_codeforces_problem_info(client):
