@@ -4,9 +4,8 @@ from app.models.oj_username import OJUsername
 
 
 class BaseSpider(metaclass=ABCMeta):
-    @classmethod
     @abstractmethod
-    def get_user_info(cls, oj_username: OJUsername, accept_problems: dict) -> dict:
+    def get_user_info(self, oj_username: OJUsername, accept_problems: dict) -> dict:
         """
         获取用户信息
         :param oj_username: OJUsername对象
@@ -23,9 +22,8 @@ class BaseSpider(metaclass=ABCMeta):
         """
         pass
 
-    @classmethod
     @abstractmethod
-    def get_problem_info(cls, problem_pid):
+    def get_problem_info(self, problem_pid):
         """
         获取用户信息
         :param problem_pid: 题目pid

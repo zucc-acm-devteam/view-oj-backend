@@ -9,8 +9,7 @@ from app.spiders.base_spider import BaseSpider
 
 
 class HduSpider(BaseSpider):
-    @classmethod
-    def get_user_info(cls, oj_username, accept_problems):
+    def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         url = 'http://acm.hdu.edu.cn/status.php?user={}'.format(username)
         accept_problem_dict = {}
@@ -45,8 +44,7 @@ class HduSpider(BaseSpider):
         } for problem_pid, accept_time in accept_problem_dict.items()]
         return {'success': success, 'data': accept_problem_list}
 
-    @classmethod
-    def get_problem_info(cls, problem_id):
+    def get_problem_info(self, problem_id):
         url = 'http://acm.hdu.edu.cn/showproblem.php?pid={}'.format(problem_id)
         res = SpiderHttp().get(url=url)
         try:

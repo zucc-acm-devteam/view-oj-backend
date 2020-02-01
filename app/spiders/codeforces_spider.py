@@ -12,8 +12,7 @@ from app.spiders.base_spider import BaseSpider
 
 
 class CodeforcesSpider(BaseSpider):
-    @classmethod
-    def get_user_info(cls, oj_username, accept_problems):
+    def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)
@@ -37,8 +36,7 @@ class CodeforcesSpider(BaseSpider):
                 })
         return {'success': success, 'data': accept_problem_list}
 
-    @classmethod
-    def get_problem_info(cls, problem_id):
+    def get_problem_info(self, problem_id):
         p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
         problem_id_1 = p.group(1)
         problem_id_2 = p.group(2)
@@ -51,7 +49,7 @@ class CodeforcesSpider(BaseSpider):
                 rating = DEFAULT_PROBLEM_RATING
         else:  # gym
             try:
-                rating = cls._get_gym_contest_rating(problem_id_1)
+                rating = self._get_gym_contest_rating(problem_id_1)
             except:
                 rating = DEFAULT_PROBLEM_RATING
         return {'rating': rating}

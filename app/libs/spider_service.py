@@ -11,7 +11,9 @@ from app.spiders.base_spider import BaseSpider
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
 from app.spiders.luogu_spider import LuoguSpider
+from app.spiders.pintia_spider import PintiaSpider
 from app.spiders.vjudge_spider import VjudgeSpider
+from app.spiders.zucc_spider import ZuccSpider
 
 
 def task_crawl_accept_problem(username=None, oj_id=None):
@@ -46,7 +48,7 @@ def crawl_accept_problem(username, oj_id):
         return
 
     oj_username = oj_username[0]
-    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
+    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']()
 
     accept_problems = dict()
 
@@ -91,7 +93,7 @@ def crawl_problem_rating(problem_id):
     problem = Problem.get_by_id(problem_id)
     oj = OJ.get_by_id(problem.oj_id)
     try:
-        oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
+        oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']()
     except:
         return
 
