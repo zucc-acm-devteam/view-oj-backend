@@ -20,7 +20,7 @@ class Cookie:
     def str_to_dict(res: str) -> dict:
         res_dict = dict()
         for i in res.split('; '):
-            k, v = i.split('=')
+            k, v = i.split('=', 1)
             res_dict[k] = v
         return res_dict
 
