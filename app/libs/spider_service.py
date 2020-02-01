@@ -47,7 +47,7 @@ def crawl_accept_problem(username, oj_id):
         return
 
     oj_username = oj_username[0]
-    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
+    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']()
 
     accept_problems = dict()
 
@@ -92,7 +92,7 @@ def crawl_problem_rating(problem_id):
     problem = Problem.get_by_id(problem_id)
     oj = OJ.get_by_id(problem.oj_id)
     try:
-        oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']
+        oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']()
     except:
         return
 
