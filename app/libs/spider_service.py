@@ -13,6 +13,7 @@ from app.spiders.hdu_spider import HduSpider
 from app.spiders.luogu_spider import LuoguSpider
 from app.spiders.pintia_spider import PintiaSpider
 from app.spiders.vjudge_spider import VjudgeSpider
+from app.spiders.zucc_spider import ZuccSpider
 
 
 def task_crawl_accept_problem(username=None, oj_id=None):
