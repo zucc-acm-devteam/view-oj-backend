@@ -17,26 +17,10 @@ class PintiaHttp(SpiderHttp):
         }
         self.headers.update(headers)
 
-    limit: int = 500
-    lastreq: int = 0
-
-    def time(self):
-        return int(time.time() * 1000)
-
-    def checklimit(self):
-        return self.time() - self.lastreq >= self.limit
-
-    def get(self, **kwargs):
-        while not self.checklimit():
-            time.sleep(self.limit / 1000)
-        self.lastreq = self.time()
-        return self._request('GET', **kwargs)
-
-    def post(self, **kwargs):
-        while not self.checklimit():
-            time.sleep(self.limit / 1000)
-        self.lastreq = self.time()
-        return self._request('POST', **kwargs)
+    @staticmethod
+    def _end_request(res, encoding):
+        time.sleep(2)
+        return res
 
 
 class PintiaSpider(BaseSpider):
@@ -49,8 +33,7 @@ class PintiaSpider(BaseSpider):
     ]
     pintia_http = PintiaHttp()
 
-    @classmethod
-    def get_user_info(cls, oj_username, accept_problems):
+    def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         password = oj_username.oj_password
         try:
@@ -58,8 +41,8 @@ class PintiaSpider(BaseSpider):
             headers = {
                 'Cookie': Cookie.dict_to_str(cookies)
             }
-            cls.pintia_http.headers.update(headers)
-            assert cls.check_cookies(username)
+            self.pintia_http.headers.update(headers)
+            assert self.check_cookies(username)
         except:
             try:
                 cookies = PintiaSpider._get_cookies(username, password)
@@ -69,18 +52,18 @@ class PintiaSpider(BaseSpider):
             headers = {
                 'Cookie': Cookie.dict_to_str(cookies)
             }
-            cls.pintia_http.headers.update(headers)
+            self.pintia_http.headers.update(headers)
         accept_problem_list = []
 
-        for problem_set_id, tag in cls.problem_set:
+        for problem_set_id, tag in self.problem_set:
             url = 'https://pintia.cn/api/problem-sets/{}/exams'.format(problem_set_id)
-            res = cls.pintia_http.get(url=url).json()
+            res = self.pintia_http.get(url=url).json()
             try:
                 exam_id = res['exam']['id']
             except:
                 continue
             url = 'https://pintia.cn/api/valid-submissions?exam_id={}'.format(exam_id)
-            res = cls.pintia_http.get(url=url).json()
+            res = self.pintia_http.get(url=url).json()
             try:
                 submissions = res['submissions']
             except:
@@ -100,8 +83,7 @@ class PintiaSpider(BaseSpider):
 
         return {'success': True, 'data': accept_problem_list}
 
-    @classmethod
-    def get_problem_info(cls, problem_id):
+    def get_problem_info(self, problem_id):
         return {'rating': DEFAULT_PROBLEM_RATING}
 
     @classmethod

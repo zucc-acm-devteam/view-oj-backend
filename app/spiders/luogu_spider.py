@@ -15,7 +15,7 @@ class LuoguHttp(SpiderHttp):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
             'host': 'www.luogu.com.cn',
-            'cookie': '__client_id=22325e412138d36d1b4c9f11654aacbb061c9c81; _uid=62916;'
+            'cookie': '__client_id=22325e412138d36d1b4c9f11654aacbb061c9c81; _uid=62916'
         }
         self.headers.update(headers)
 
@@ -59,8 +59,7 @@ class LuoguSpider(BaseSpider):
             raise Exception('problem can not resolve')
         return real_oj_name, problem_pid
 
-    @classmethod
-    def get_user_info(cls, oj_username, accept_problems):
+    def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
 
         page = 1
@@ -91,8 +90,7 @@ class LuoguSpider(BaseSpider):
 
         return {'success': success, 'data': accept_problem_list}
 
-    @classmethod
-    def get_problem_info(cls, problem_id):
+    def get_problem_info(self, problem_id):
         url = 'https://www.luogu.com.cn/problem/P{}'.format(problem_id)
         res = LuoguHttp().get(url=url)
 

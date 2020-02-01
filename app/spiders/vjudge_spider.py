@@ -22,8 +22,7 @@ class VjudgeHttp(SpiderHttp):
 class VjudgeSpider(BaseSpider):
     vjudge_http = VjudgeHttp()
 
-    @classmethod
-    def get_user_info(cls, oj_username, accept_problems):
+    def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         accept_problem_list = []
         max_id = ''
@@ -32,13 +31,13 @@ class VjudgeSpider(BaseSpider):
         while True:
             url = "https://vjudge.net/user/submissions?" \
                   "username={}&pageSize=500&status=ac&maxId={}".format(username, max_id)
-            res = cls.vjudge_http.get(url=url).json()
+            res = self.vjudge_http.get(url=url).json()
             if not res['data']:
                 break
             for i in res['data']:
                 success = True
                 if i[4] == 'AC':
-                    oj_name = cls._change_oj_name(i[2])
+                    oj_name = self._change_oj_name(i[2])
                     problem_pid = i[3]
                     accept_time = timestamp_to_str(i[9] // 1000)
                     if accept_problems.get("{}-{}".format(oj_name, problem_pid)) == accept_time:
@@ -54,8 +53,7 @@ class VjudgeSpider(BaseSpider):
                 break
         return {'success': success, 'data': accept_problem_list}
 
-    @classmethod
-    def get_problem_info(cls, problem_id):
+    def get_problem_info(self, problem_id):
         pass
 
     @staticmethod

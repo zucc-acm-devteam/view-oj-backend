@@ -14,13 +14,13 @@ def test_hdu_user_info(client):
     }
 
     accept_problems = {}
-    res = HduSpider.get_user_info(oj_username, accept_problems)
+    res = HduSpider().get_user_info(oj_username, accept_problems)
     assert test_data in res['data']
 
     accept_problems = {'hdu-6703': '2019-08-24 10:39:31'}
-    res = HduSpider.get_user_info(oj_username, accept_problems)
+    res = HduSpider().get_user_info(oj_username, accept_problems)
     assert test_data not in res['data']
 
 
 def test_hdu_problem_info(client):
-    assert HduSpider.get_problem_info('1000')['rating'] == 1500
+    assert HduSpider().get_problem_info('1000')['rating'] == 1500

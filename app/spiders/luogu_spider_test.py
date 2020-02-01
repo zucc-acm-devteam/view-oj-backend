@@ -14,15 +14,15 @@ def test_luogu_user_info(client):
     # uid
     oj_username.oj_username = '62916'
     accept_problems = {}
-    res = LuoguSpider.get_user_info(oj_username, accept_problems)
+    res = LuoguSpider().get_user_info(oj_username, accept_problems)
     assert test_data in res['data']
 
     # 用户名
     oj_username.oj_username = 'taoting'
     accept_problems = {}
-    res = LuoguSpider.get_user_info(oj_username, accept_problems)
+    res = LuoguSpider().get_user_info(oj_username, accept_problems)
     assert test_data in res['data']
 
 
 def test_luogu_problem_info(client):
-    assert LuoguSpider.get_problem_info('1001')['rating'] == 1500
+    assert LuoguSpider().get_problem_info('1001')['rating'] == 1500

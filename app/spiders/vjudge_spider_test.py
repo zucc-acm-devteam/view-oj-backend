@@ -16,9 +16,9 @@ def test_vjudge_user_info(client):
     }
 
     accept_problems = {}
-    res = VjudgeSpider.get_user_info(oj_username, accept_problems)
+    res = VjudgeSpider().get_user_info(oj_username, accept_problems)
     assert test_data in res['data']
 
     accept_problems = {'jisuanke-T1001': '2019-11-11 11:54:57'}
-    res = VjudgeSpider.get_user_info(oj_username, accept_problems)
+    res = VjudgeSpider().get_user_info(oj_username, accept_problems)
     assert test_data not in res['data']
