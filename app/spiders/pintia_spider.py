@@ -100,7 +100,8 @@ class PintiaSpider(BaseSpider):
 
         return {'success': True, 'data': accept_problem_list}
 
-    def get_problem_info(self, problem_id):
+    @classmethod
+    def get_problem_info(cls, problem_id):
         return {'rating': DEFAULT_PROBLEM_RATING}
 
     @classmethod
@@ -123,14 +124,3 @@ class PintiaSpider(BaseSpider):
         if res.get('status') != 'ok':
             raise Exception(res.get('error'))
         return Cookie.str_to_dict(res['result'])
-
-
-if __name__ == '__main__':
-    from app import create_app
-    from app.models.oj_username import OJUsername
-
-    create_app().app_context().push()
-    username = '31801054'
-    oj_username = OJUsername().get_by_username_and_oj_id(username, 25)
-    temp = PintiaSpider().get_user_info(oj_username, {})
-    print(username, len(temp['data']), temp)
