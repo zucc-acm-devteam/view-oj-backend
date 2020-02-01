@@ -7,11 +7,6 @@ from app.spiders.base_spider import BaseSpider
 from app.libs.spider_http import SpiderHttp
 
 
-class ZuccHttp(SpiderHttp):
-    def __init__(self):
-        super().__init__()
-
-
 class ZuccSpider(BaseSpider):
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
@@ -21,7 +16,7 @@ class ZuccSpider(BaseSpider):
         url = 'http://acm.zucc.edu.cn/status.php?user_id={}&jresult=4'.format(username)
         ok = False
         while not ok:
-            res = ZuccHttp().get(url=url)
+            res = SpiderHttp().get(url=url)
             soup = BeautifulSoup(res.text, 'lxml')
             trs = soup.find('tbody').find_all('tr')
             if not trs:
@@ -45,7 +40,7 @@ class ZuccSpider(BaseSpider):
 
     def get_problem_info(self, problem_id):
         url = 'http://acm.zucc.edu.cn/problem.php?id={}'.format(problem_id)
-        res = ZuccHttp().get(url=url)
+        res = SpiderHttp().get(url=url)
         try:
             total = int(re.search(r'Submit: </span>(\d+)(&nbsp;)*<span', res.text).group(1))
             accept = int(re.search(r'Solved: </span>(\d+)(&nbsp;)*<br>', res.text).group(1))
@@ -58,5 +53,5 @@ class ZuccSpider(BaseSpider):
     @staticmethod
     def _judge_user(username):
         url = 'http://acm.zucc.edu.cn/userinfo.php?user={}'.format(username)
-        res = ZuccHttp().get(url=url)
+        res = SpiderHttp().get(url=url)
         return not re.findall(r"No such User!", res.text)
