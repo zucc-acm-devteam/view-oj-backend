@@ -72,7 +72,7 @@ class LuoguSpider(BaseSpider):
             for i in res['currentData']['records']['result']:
                 success = True
                 if i['status'] == 12:
-                    real_oj, problem_pid = cls._change_problem_pid(i['problem']['pid'])
+                    real_oj, problem_pid = self._change_problem_pid(i['problem']['pid'])
                     accept_time = timestamp_to_str(i['submitTime'])
                     if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
                         finished = True
