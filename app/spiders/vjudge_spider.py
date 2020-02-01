@@ -13,8 +13,7 @@ class VjudgeHttp(SpiderHttp):
     def __init__(self):
         super().__init__()
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
-            'cookie': 'JSESSIONID=0874AE98CD2E34AD620F4F20753DD58F; Jax.Q=taoting|3CC7O8QU2Q7YEXCEYOQ255FLMPE7R3'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
         }
         self.headers.update(headers)
 
