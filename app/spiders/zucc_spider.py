@@ -10,10 +10,6 @@ from app.libs.spider_http import SpiderHttp
 class ZuccHttp(SpiderHttp):
     def __init__(self):
         super().__init__()
-        headers = {
-            'cookie': 'resolveIDs=0; order_dir_list_by=1A; PHPSESSID=ni7c6l5o3u2mgbl98d9ubi0fo5',
-        }
-        self.headers.update(headers)
 
 
 class ZuccSpider(BaseSpider):
