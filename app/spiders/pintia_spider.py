@@ -1,11 +1,12 @@
 import json
 import time
+
 import requests
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.spiders.base_spider import BaseSpider
 from app.libs.cookie import Cookie
 from app.libs.spider_http import SpiderHttp
+from app.spiders.base_spider import BaseSpider
 
 
 class PintiaHttp(SpiderHttp):
