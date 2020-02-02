@@ -13,7 +13,7 @@ def test_pintia_user_info(client):
     test_data = {
         'oj': 'pintia',
         'problem_pid': 'L-L1-001',
-        'accept_time': '2018-12-07 05:45:37'
+        'accept_time': '2018-12-07 13:45:37'
     }
 
     accept_problems = {}

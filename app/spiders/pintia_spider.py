@@ -1,3 +1,4 @@
+import datetime
 import json
 import time
 
@@ -5,6 +6,7 @@ import requests
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.cookie import Cookie
+from app.libs.helper import str_to_datetime, datetime_to_str
 from app.libs.spider_http import SpiderHttp
 from app.spiders.base_spider import BaseSpider
 
@@ -73,6 +75,7 @@ class PintiaSpider(BaseSpider):
                 if submission['status'] != 'ACCEPTED':
                     continue
                 accept_time = submission['submitAt'].replace('T', ' ').replace('Z', '')
+                accept_time = datetime_to_str(str_to_datetime(accept_time) + datetime.timedelta(hours=8))
                 problem_id = '{}-{}'.format(tag, submission['problemSetProblem']['label'])
                 if accept_time == accept_problems.get(problem_id):
                     continue
