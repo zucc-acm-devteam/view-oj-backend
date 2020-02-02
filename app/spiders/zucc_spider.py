@@ -19,6 +19,7 @@ class ZuccSpider(BaseSpider):
             res = SpiderHttp().get(url=url)
             soup = BeautifulSoup(res.text, 'lxml')
             trs = soup.find('tbody').find_all('tr')
+            next = -1
             if not trs:
                 break
             for tr in trs:
