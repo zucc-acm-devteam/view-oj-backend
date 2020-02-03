@@ -76,14 +76,25 @@ class PintiaSpider(BaseSpider):
                     continue
                 accept_time = submission['submitAt'].replace('T', ' ').replace('Z', '')
                 accept_time = datetime_to_str(str_to_datetime(accept_time) + datetime.timedelta(hours=8))
-                problem_id = '{}-{}'.format(tag, submission['problemSetProblem']['label'])
-                if accept_problems.get('pintia-' + problem_id) == accept_time:
-                    continue
-                accept_problem_list.append({
-                    'oj': 'pintia',
-                    'problem_pid': problem_id,
-                    'accept_time': accept_time
-                })
+                pid = submission['problemSetProblem']['label']
+                if tag == 'Z':
+                    problem_id = pid
+                    if accept_problems.get('zoj-' + problem_id) == accept_time:
+                        continue
+                    accept_problem_list.append({
+                        'oj': 'zoj',
+                        'problem_pid': problem_id,
+                        'accept_time': accept_time
+                    })
+                else:
+                    problem_id = '{}-{}'.format(tag, pid)
+                    if accept_problems.get('pintia-' + problem_id) == accept_time:
+                        continue
+                    accept_problem_list.append({
+                        'oj': 'pintia',
+                        'problem_pid': problem_id,
+                        'accept_time': accept_time
+                    })
 
         return {'success': True, 'data': accept_problem_list}
 
