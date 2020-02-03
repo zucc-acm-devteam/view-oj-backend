@@ -20,14 +20,14 @@ def test_create_task(client):
     # 登录
     assert create_session(client, 'admin', 'admin')['code'] == 0
     # 创建单个craw_user_info任务
-    assert create_task(client, type='craw_user_info', kwargs=json.dumps({
+    assert create_task(client, type='crawl_user_info', kwargs=json.dumps({
         'username': 'admin',
         'oj_id': 2
     }))['code'] == 0
     # 创建多个craw_user_info任务
-    assert create_task(client, type='craw_user_info')['code'] == 0
+    assert create_task(client, type='crawl_user_info')['code'] == 0
     # 创建单个craw_problem_info任务
-    assert create_task(client, type='craw_problem_info', kwargs=json.dumps({
+    assert create_task(client, type='crawl_problem_info', kwargs=json.dumps({
         'problem_id': 1
     }))['code'] == 0
     # 创建单个calculate_user_rating任务
