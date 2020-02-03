@@ -61,13 +61,3 @@ class JisuankeSpider(BaseSpider):
         new_problem_id = re.findall(r'//nanti.jisuanke.com/t/(.*)', res.url)[0]
         mapping.modify(value=new_problem_id)
         return new_problem_id
-
-
-if __name__ == '__main__':
-    from app.models.oj_username import OJUsername
-    from app import create_app
-
-    create_app().app_context().push()
-    oj_username = OJUsername()
-    oj_username.oj_username = '4lkvgc2'
-    print(JisuankeSpider().get_user_info(oj_username, {}))
