@@ -77,7 +77,7 @@ class PintiaSpider(BaseSpider):
                 accept_time = submission['submitAt'].replace('T', ' ').replace('Z', '')
                 accept_time = datetime_to_str(str_to_datetime(accept_time) + datetime.timedelta(hours=8))
                 problem_id = '{}-{}'.format(tag, submission['problemSetProblem']['label'])
-                if accept_time == accept_problems.get(problem_id):
+                if accept_problems.get('pintia-' + problem_id) == accept_time:
                     continue
                 accept_problem_list.append({
                     'oj': 'pintia',
