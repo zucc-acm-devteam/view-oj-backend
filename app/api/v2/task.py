@@ -16,12 +16,12 @@ api = RedPrint('task')
 @login_required
 def create_task_api():
     form = CreateTaskForm().validate_for_api().data_
-    if form['type'] == 'craw_user_info':
+    if form['type'] == 'crawl_user_info':
         if form['kwargs']:
             task_crawl_accept_problem(form['kwargs']['username'], form['kwargs']['oj_id'])
         else:
             task_crawl_accept_problem()
-    elif form['type'] == 'craw_problem_info':
+    elif form['type'] == 'crawl_problem_info':
         task_crawl_problem_rating(form['kwargs']['problem_id'])
     elif form['type'] == 'calculate_user_rating':
         if form['kwargs']:
