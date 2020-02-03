@@ -20,6 +20,6 @@ def test_pintia_user_info(client):
     res = PintiaSpider().get_user_info(oj_username, accept_problems)
     assert test_data in res['data']
 
-    accept_problems = {'L-L1-001': '2018-12-07 05:45:37'}
+    accept_problems = {'L-L1-001': '2018-12-07 13:45:37'}
     res = PintiaSpider().get_user_info(oj_username, accept_problems)
     assert test_data not in res['data']
