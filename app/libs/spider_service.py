@@ -10,8 +10,11 @@ from app.spiders.base_spider import BaseSpider
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
+from app.spiders.jisuanke_spider import JisuankeSpider
 from app.spiders.luogu_spider import LuoguSpider
+from app.spiders.nowcoder_spider import NowcoderSpider
 from app.spiders.pintia_spider import PintiaSpider
+from app.spiders.poj_spider import PojSpider
 from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zucc_spider import ZuccSpider
 
