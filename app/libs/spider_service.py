@@ -59,10 +59,11 @@ def crawl_accept_problem(username, oj_id):
         accept_problems["{}-{}".format(i.problem.oj.name, i.problem.problem_pid)] = \
             datetime.datetime.strftime(i.create_time, '%Y-%m-%d %H:%M:%S')
 
-    res = oj_spider.get_user_info(oj_username, accept_problems)
+    res = oj_spider.get_user_info(oj_username, accept_problems.copy())
     if res['success']:
         oj_username.modify(last_success_time=datetime.datetime.now())
     crawl_accept_problems = res['data']
+    print(crawl_accept_problems)
 
     deduplication_accept_problem = list()
 
@@ -78,7 +79,7 @@ def crawl_accept_problem(username, oj_id):
             if accept_problems.get(pid) is None:
                 deduplication_accept_problem.append(i)
 
-    print(len(deduplication_accept_problem), deduplication_accept_problem)
+    print(len(deduplication_accept_problem))
     for i in deduplication_accept_problem:
         oj = OJ.get_by_name(i['oj'])
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
