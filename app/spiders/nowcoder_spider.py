@@ -38,7 +38,9 @@ class NowcoderSpider(BaseSpider):
                 if accept_problems.get('nowcoder-' + problem_id) == accept_time:
                     ok = True
                     break
-                accept_problems['nowcoder-' + problem_id] = accept_time
+                time = accept_problems.get('nowcoder-' + problem_id)
+                if time is None or time >= accept_time:
+                    accept_problems['nowcoder-' + problem_id] = accept_time
                 accept_problem_list.append({
                     'oj': 'nowcoder',
                     'problem_pid': problem_id,
