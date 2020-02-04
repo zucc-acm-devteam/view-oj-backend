@@ -36,7 +36,7 @@ class SpiderHttp:
         if headers:
             self.headers.update(headers)
         url, data = self._before_request(url, params, data)
-        res = self.sess.request(method, url=url, data=data)
+        res = self.sess.request(method, url=url, data=data, timeout=30)
         res = self._end_request(res, encoding)
         return res
 
