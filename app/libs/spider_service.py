@@ -78,7 +78,7 @@ def crawl_accept_problem(username, oj_id):
             if accept_problems.get(pid) is None:
                 deduplication_accept_problem.append(i)
 
-    print(len(deduplication_accept_problem))
+    print(len(deduplication_accept_problem), deduplication_accept_problem)
     for i in deduplication_accept_problem:
         oj = OJ.get_by_name(i['oj'])
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
