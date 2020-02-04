@@ -18,10 +18,12 @@ class NowcoderSpider(BaseSpider):
         accept_problem_list = []
         ok = False
         while not ok:
-            url = 'http://ac.nowcoder.com/acm/contest/profile/{}/' \
+            url = 'https://ac.nowcoder.com/acm/contest/profile/{}/' \
                   'practice-coding?pageSize=200&statusTypeFilter=5&orderType=DESC&page={}'.format(
                 username, index)
             res = SpiderHttp().get(url=url)
+            if res.status_code != 200:
+                break
             if '用户不存在' in res.text:
                 break
             if '没有找到你想要的内容呢' in res.text:
