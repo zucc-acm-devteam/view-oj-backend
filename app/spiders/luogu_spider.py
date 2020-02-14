@@ -40,8 +40,11 @@ class LuoguSpider(BaseSpider):
 
     @staticmethod
     def _change_problem_pid(problem_pid: str) -> (str, str):
-        if problem_pid[0] == 'P' or problem_pid[0] == 'T':
+        if problem_pid[0] == 'P':
             real_oj_name = 'luogu'
+            problem_pid = problem_pid[1:]
+        elif problem_pid[0] == 'T':
+            real_oj_name = 'luogu-team'
             problem_pid = problem_pid[1:]
         elif problem_pid[0] == 'C':
             real_oj_name = 'codeforces'
@@ -77,11 +80,12 @@ class LuoguSpider(BaseSpider):
                     if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
                         finished = True
                         break
-                    accept_problem_list.append({
-                        'oj': real_oj,
-                        'problem_pid': problem_pid,
-                        'accept_time': accept_time
-                    })
+                    if real_oj != 'luogu-team':
+                        accept_problem_list.append({
+                            'oj': real_oj,
+                            'problem_pid': problem_pid,
+                            'accept_time': accept_time
+                        })
             if finished:
                 break
             if len(res['currentData']['records']['result']) != 20:
