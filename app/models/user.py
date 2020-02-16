@@ -1,6 +1,6 @@
 from flask import current_app
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, func
+from sqlalchemy import Column, Integer, String, func, cast, Date
 
 from app import login_manager
 from app.libs.error_code import AuthFailed
@@ -68,6 +68,17 @@ class User(UserMixin, Base):
                 ).count()
             })
         return res
+
+    @property
+    def rating_trend(self):
+        from app.models.accept_problem import AcceptProblem
+        return [{
+            'date': i[0],
+            'add_rating': int(i[1])
+        } for i in
+            db.session.query(cast(AcceptProblem.create_time, Date), func.sum(AcceptProblem.add_rating)).filter(
+                AcceptProblem.username == self.username
+            ).group_by(cast(AcceptProblem.create_time, Date)).all()]
 
     def check_password(self, password):
         return self.password == password
