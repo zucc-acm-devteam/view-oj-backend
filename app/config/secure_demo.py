@@ -18,5 +18,7 @@ REDIS_1_URL = 'redis://127.0.0.1:6379/1'
 REDIS_2_URL = 'redis://127.0.0.1:6379/2'
 
 # 定义账号
+ZUCC_ID = ''
+ZUCC_PASSWORD = ''
 LUOGU_ID = ''
 LUOGU_PASSWORD = ''
