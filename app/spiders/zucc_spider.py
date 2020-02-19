@@ -1,13 +1,31 @@
+import json
 import re
 
 from bs4 import BeautifulSoup
 
+from app.config.secure import ZUCC_ID, ZUCC_PASSWORD
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.cookie import Cookie
 from app.libs.spider_http import SpiderHttp
+from app.models.mapping import Mapping
 from app.spiders.base_spider import BaseSpider
 
 
 class ZuccSpider(BaseSpider):
+    zucc_http = SpiderHttp()
+
+    def __init__(self):
+        try:
+            cookies = json.loads(Mapping.get_by_id('zucc-cookie'))
+            headers = {
+                'Cookie': Cookie.dict_to_str(cookies)
+            }
+            self.zucc_http.headers.update(headers)
+            assert self.check_login_status() is not None
+        except:
+            self.login(ZUCC_ID, ZUCC_PASSWORD)
+            assert self.check_login_status() is not None
+
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         if not self._judge_user(username):
@@ -16,7 +34,7 @@ class ZuccSpider(BaseSpider):
         url = 'http://acm.zucc.edu.cn/status.php?user_id={}&jresult=4'.format(username)
         ok = False
         while not ok:
-            res = SpiderHttp().get(url=url)
+            res = self.zucc_http.get(url=url)
             soup = BeautifulSoup(res.text, 'lxml')
             trs = soup.find('tbody').find_all('tr')
             next = -1
@@ -41,7 +59,7 @@ class ZuccSpider(BaseSpider):
 
     def get_problem_info(self, problem_id):
         url = 'http://acm.zucc.edu.cn/problem.php?id={}'.format(problem_id)
-        res = SpiderHttp().get(url=url)
+        res = self.zucc_http.get(url=url)
         try:
             total = int(re.search(r'Submit: </span>(\d+)(&nbsp;)*<span', res.text).group(1))
             accept = int(re.search(r'Solved: </span>(\d+)(&nbsp;)*<br>', res.text).group(1))
@@ -51,8 +69,29 @@ class ZuccSpider(BaseSpider):
 
         return {'rating': rating}
 
-    @staticmethod
-    def _judge_user(username):
+    def _judge_user(self, username):
         url = 'http://acm.zucc.edu.cn/userinfo.php?user={}'.format(username)
-        res = SpiderHttp().get(url=url)
+        res = self.zucc_http.get(url=url)
         return not re.findall(r"No such User!", res.text)
+
+    def check_login_status(self):
+        url = 'http://acm.zucc.edu.cn/template/bs3/profile.php'
+        res = self.zucc_http.get(url=url)
+        try:
+            return re.search(r'document\.getElementById\("profile"\)\.innerHTML="(.*)";', res.text).group(1)
+        except:
+            return None
+
+    def _get_csrf_value(self):
+        url = 'http://acm.zucc.edu.cn/csrf.php'
+        res = self.zucc_http.get(url=url)
+        return re.search(r'value="(.*?)"', res.text).group(1)
+
+    def login(self, username, password):
+        url = 'http://acm.zucc.edu.cn/login.php'
+        data = {
+            'user_id': username,
+            'password': password,
+            'csrf': self._get_csrf_value()
+        }
+        res = self.zucc_http.post(url=url, data=data)
