@@ -22,23 +22,23 @@ class ZuccSpider(BaseSpider):
                 'Cookie': Cookie.dict_to_str(cookie)
             }
             self.zucc_http.headers.update(headers)
-            assert self.check_login_status() is not None
+            assert self.check_login_status()
         except:
             self.login(ZUCC_ID, ZUCC_PASSWORD)
-            assert self.check_login_status() is not None
+            assert self.check_login_status()
 
-        cookie = {}
-        for i in self.zucc_http.sess.cookies:
-            cookie[i.name] = i.value
+            cookie = {}
+            for i in self.zucc_http.sess.cookies:
+                cookie[i.name] = i.value
 
-        mapping.modify(value=json.dumps(cookie, sort_keys=True))
+            mapping.modify(value=json.dumps(cookie, sort_keys=True))
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         if not self._judge_user(username):
             return {'success': False, 'data': []}
         accept_problem_list = []
-        url = 'http://acm.zucc.edu.cn/status.php?user_id={}&jresult=4'.format(username)
+        url = 'http://acm.zucc.edu.cn/status.php?user_id={}'.format(username)
         ok = False
         while not ok:
             res = self.zucc_http.get(url=url)
@@ -49,6 +49,10 @@ class ZuccSpider(BaseSpider):
                 break
             for tr in trs:
                 tds = tr.find_all('td')
+                next = int(tds[0].text)
+                status = tds[3].find_all('a')[0]['class']
+                if 'label-success' not in status:
+                    continue
                 problem_id = tds[2].text
                 accept_time = tds[8].text
                 if accept_problems.get('zucc-' + problem_id) == accept_time:
@@ -59,9 +63,10 @@ class ZuccSpider(BaseSpider):
                     'problem_pid': problem_id,
                     'accept_time': accept_time
                 })
-                next = int(tds[0].text)
-            url = 'http://acm.zucc.edu.cn/status.php?user_id={}&jresult=4&top={}'.format(username,
-                                                                                         next - 1)
+            new_url = 'http://acm.zucc.edu.cn/status.php?user_id={}&top={}'.format(username, next - 1)
+            if new_url == url:
+                break
+            url = new_url
         return {'success': True, 'data': accept_problem_list}
 
     def get_problem_info(self, problem_id):
@@ -85,9 +90,10 @@ class ZuccSpider(BaseSpider):
         url = 'http://acm.zucc.edu.cn/template/bs3/profile.php'
         res = self.zucc_http.get(url=url)
         try:
-            return re.search(r'document\.getElementById\("profile"\)\.innerHTML="(.*)";', res.text).group(1)
+            result = re.search(r'document\.getElementById\("profile"\)\.innerHTML="(.*)";', res.text).group(1)
         except:
-            return None
+            return False
+        return result == ZUCC_ID
 
     def _get_csrf_value(self):
         url = 'http://acm.zucc.edu.cn/csrf.php'
