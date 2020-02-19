@@ -15,16 +15,23 @@ class ZuccSpider(BaseSpider):
     zucc_http = SpiderHttp()
 
     def __init__(self):
+        mapping = Mapping.get_by_id('zucc-cookie')
         try:
-            cookies = json.loads(Mapping.get_by_id('zucc-cookie'))
+            cookie = json.loads(mapping.value)
             headers = {
-                'Cookie': Cookie.dict_to_str(cookies)
+                'Cookie': Cookie.dict_to_str(cookie)
             }
             self.zucc_http.headers.update(headers)
             assert self.check_login_status() is not None
         except:
             self.login(ZUCC_ID, ZUCC_PASSWORD)
             assert self.check_login_status() is not None
+
+        cookie = {}
+        for i in self.zucc_http.sess.cookies:
+            cookie[i.name] = i.value
+
+        mapping.modify(value=json.dumps(cookie, sort_keys=True))
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
@@ -95,3 +102,11 @@ class ZuccSpider(BaseSpider):
             'csrf': self._get_csrf_value()
         }
         res = self.zucc_http.post(url=url, data=data)
+
+
+if __name__ == '__main__':
+    from app import create_app
+
+    create_app().app_context().push()
+
+    ZuccSpider()
