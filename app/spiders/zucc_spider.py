@@ -22,10 +22,10 @@ class ZuccSpider(BaseSpider):
                 'Cookie': Cookie.dict_to_str(cookie)
             }
             self.zucc_http.headers.update(headers)
-            assert self.check_login_status()
+            assert self.check_login_status() == ZUCC_ID
         except:
             self.login(ZUCC_ID, ZUCC_PASSWORD)
-            assert self.check_login_status()
+            assert self.check_login_status() == ZUCC_ID
 
             cookie = {}
             for i in self.zucc_http.sess.cookies:
@@ -90,10 +90,9 @@ class ZuccSpider(BaseSpider):
         url = 'http://acm.zucc.edu.cn/template/bs3/profile.php'
         res = self.zucc_http.get(url=url)
         try:
-            result = re.search(r'document\.getElementById\("profile"\)\.innerHTML="(.*)";', res.text).group(1)
+            return re.search(r'document\.getElementById\("profile"\)\.innerHTML="(.*)";', res.text).group(1)
         except:
-            return False
-        return result == ZUCC_ID
+            return None
 
     def _get_csrf_value(self):
         url = 'http://acm.zucc.edu.cn/csrf.php'
