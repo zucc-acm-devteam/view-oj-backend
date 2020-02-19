@@ -40,24 +40,24 @@ class PintiaSpider(BaseSpider):
         username = oj_username.oj_username
         password = oj_username.oj_password
         try:
-            cookies = json.loads(oj_username.oj_cookies)
+            cookie = json.loads(oj_username.oj_cookies)
             headers = {
-                'Cookie': Cookie.dict_to_str(cookies)
+                'Cookie': Cookie.dict_to_str(cookie)
             }
             self.pintia_http.headers.update(headers)
             assert self.check_login_status() == username
         except:
             try:
-                cookies = self._get_cookies(username, password)
+                cookie = self._get_cookies(username, password)
             except:
                 return {'success': False, 'data': []}
             headers = {
-                'Cookie': Cookie.dict_to_str(cookies)
+                'Cookie': Cookie.dict_to_str(cookie)
             }
             self.pintia_http.headers.update(headers)
             assert self.check_login_status() == username
 
-        oj_username.modify(oj_cookies=json.dumps(cookies, sort_keys=True))
+        oj_username.modify(oj_cookies=json.dumps(cookie, sort_keys=True))
 
         accept_problem_list = []
 
