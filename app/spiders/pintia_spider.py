@@ -51,12 +51,13 @@ class PintiaSpider(BaseSpider):
                 cookies = self._get_cookies(username, password)
             except:
                 return {'success': False, 'data': []}
-            oj_username.modify(oj_cookies=json.dumps(cookies))
             headers = {
                 'Cookie': Cookie.dict_to_str(cookies)
             }
             self.pintia_http.headers.update(headers)
             assert self.check_login_status() == username
+
+        oj_username.modify(oj_cookies=json.dumps(cookies))
 
         accept_problem_list = []
 
