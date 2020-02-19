@@ -57,7 +57,7 @@ class PintiaSpider(BaseSpider):
             self.pintia_http.headers.update(headers)
             assert self.check_login_status() == username
 
-        oj_username.modify(oj_cookies=json.dumps(cookies))
+        oj_username.modify(oj_cookies=json.dumps(cookies, sort_keys=True))
 
         accept_problem_list = []
 
