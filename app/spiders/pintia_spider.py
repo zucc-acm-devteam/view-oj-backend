@@ -45,10 +45,10 @@ class PintiaSpider(BaseSpider):
                 'Cookie': Cookie.dict_to_str(cookies)
             }
             self.pintia_http.headers.update(headers)
-            assert self.check_cookies(username)
+            assert self.check_login_status() == username
         except:
             try:
-                cookies = PintiaSpider._get_cookies(username, password)
+                cookies = self._get_cookies(username, password)
             except:
                 return {'success': False, 'data': []}
             oj_username.modify(oj_cookies=json.dumps(cookies))
@@ -56,6 +56,8 @@ class PintiaSpider(BaseSpider):
                 'Cookie': Cookie.dict_to_str(cookies)
             }
             self.pintia_http.headers.update(headers)
+            assert self.check_login_status() == username
+
         accept_problem_list = []
 
         for problem_set_id, tag in self.problem_set:
@@ -101,15 +103,12 @@ class PintiaSpider(BaseSpider):
     def get_problem_info(self, problem_id):
         return {'rating': DEFAULT_PROBLEM_RATING}
 
-    @classmethod
-    def check_cookies(cls, email):
+    def check_login_status(self):
         url = 'https://pintia.cn/api/u/current'
-        res = cls.pintia_http.get(url=url).json()
+        res = self.pintia_http.get(url=url).json()
         if not res.get('user'):
-            return False
-        if res['user']['email'] != email:
-            return False
-        return True
+            return None
+        return res['user']['email']
 
     @staticmethod
     def _get_cookies(email, password):
