@@ -102,11 +102,3 @@ class ZuccSpider(BaseSpider):
             'csrf': self._get_csrf_value()
         }
         res = self.zucc_http.post(url=url, data=data)
-
-
-if __name__ == '__main__':
-    from app import create_app
-
-    create_app().app_context().push()
-
-    ZuccSpider()
