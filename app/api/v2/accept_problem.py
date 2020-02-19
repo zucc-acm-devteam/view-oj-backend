@@ -11,10 +11,12 @@ api = RedPrint('accept_problem')
 @api.route("", methods=['GET'])
 def search_accept_problem_api():
     form = SearchAcceptProblemForm().validate_for_api().data_
-    res = AcceptProblem.search(**form)
     return jsonify({
         'code': 0,
-        'data': res
+        'data': {
+            'detail': AcceptProblem.search(**form),
+            'summary': AcceptProblem.search_distribute(form['username'], form['start_date'], form['end_date'])
+        }
     })
 
 

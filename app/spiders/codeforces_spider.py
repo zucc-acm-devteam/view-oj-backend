@@ -24,8 +24,13 @@ class CodeforcesSpider(BaseSpider):
         success = False
         for rec in res:
             success = True
-            if rec['verdict'] == 'OK':
-                problem_pid = '{}{}'.format(rec['problem']['contestId'], rec['problem']['index'])
+            if rec['testset'] == 'PRETESTS':
+                continue
+            if rec.get('verdict') == 'OK':
+                if rec['problem'].get('problemsetName'):
+                    problem_pid = rec['problem']['index']
+                else:
+                    problem_pid = '{}{}'.format(rec['problem']['contestId'], rec['problem']['index'])
                 accept_time = timestamp_to_str(rec['creationTimeSeconds'])
                 if accept_problems.get("codeforces-{}".format(problem_pid)) == accept_time:
                     break

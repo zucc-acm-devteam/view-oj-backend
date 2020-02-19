@@ -1,3 +1,4 @@
+import datetime
 import json
 import time
 
@@ -5,6 +6,7 @@ import requests
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.cookie import Cookie
+from app.libs.helper import datetime_to_str, str_to_datetime
 from app.libs.spider_http import SpiderHttp
 from app.spiders.base_spider import BaseSpider
 
@@ -73,14 +75,26 @@ class PintiaSpider(BaseSpider):
                 if submission['status'] != 'ACCEPTED':
                     continue
                 accept_time = submission['submitAt'].replace('T', ' ').replace('Z', '')
-                problem_id = '{}-{}'.format(tag, submission['problemSetProblem']['label'])
-                if accept_time == accept_problems.get(problem_id):
-                    continue
-                accept_problem_list.append({
-                    'oj': 'pintia',
-                    'problem_pid': problem_id,
-                    'accept_time': accept_time
-                })
+                accept_time = datetime_to_str(str_to_datetime(accept_time) + datetime.timedelta(hours=8))
+                pid = submission['problemSetProblem']['label']
+                if tag == 'Z':
+                    problem_id = pid
+                    if accept_problems.get('zoj-' + problem_id) == accept_time:
+                        continue
+                    accept_problem_list.append({
+                        'oj': 'zoj',
+                        'problem_pid': problem_id,
+                        'accept_time': accept_time
+                    })
+                else:
+                    problem_id = '{}-{}'.format(tag, pid)
+                    if accept_problems.get('pintia-' + problem_id) == accept_time:
+                        continue
+                    accept_problem_list.append({
+                        'oj': 'pintia',
+                        'problem_pid': problem_id,
+                        'accept_time': accept_time
+                    })
 
         return {'success': True, 'data': accept_problem_list}
 

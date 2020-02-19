@@ -1,9 +1,9 @@
 # 定义数据库信息
-SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:ZUCCACM225225@10.66.28.6:3306/view-oj"
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:root@127.0.0.1:3306/view-oj"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # 定义flask信息
-SECRET_KEY = 'view-oj'
+SECRET_KEY = '123456'
 
 # 定义celery信息
 BROKER_1_URL = 'redis://127.0.0.1:6379/1'

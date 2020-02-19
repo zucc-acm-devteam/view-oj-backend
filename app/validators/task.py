@@ -22,7 +22,7 @@ class CreateTaskForm(BaseForm):
             except Exception:
                 raise ValidationError('kwargs format error')
 
-        if self.type.data == 'craw_user_info':
+        if self.type.data == 'crawl_user_info':
             if self.kwargs.data is not None:
                 if self.kwargs.data.get('username') is None or self.kwargs.data.get('oj_id') is None:
                     raise ValidationError('kwargs missing parameters')
@@ -30,7 +30,7 @@ class CreateTaskForm(BaseForm):
                     raise ValidationError('User does not exist')
                 if OJ.get_by_id(self.kwargs.data['oj_id']) is None:
                     raise ValidationError('OJ does not exist')
-        elif self.type.data == 'craw_problem_info':
+        elif self.type.data == 'crawl_problem_info':
             if self.kwargs.data is None or self.kwargs.data.get('problem_id') is None:
                 raise ValidationError('kwargs missing parameters')
             if Problem.get_by_id(self.kwargs.data['problem_id']) is None:
