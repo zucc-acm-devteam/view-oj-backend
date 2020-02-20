@@ -24,6 +24,7 @@ class ZuccSpider(BaseSpider):
             self.zucc_http.headers.update(headers)
             assert self.check_login_status() == ZUCC_ID
         except:
+            self.zucc_http.headers.update({'Cookie': None})
             self.login(ZUCC_ID, ZUCC_PASSWORD)
             assert self.check_login_status() == ZUCC_ID
 
@@ -107,3 +108,11 @@ class ZuccSpider(BaseSpider):
             'csrf': self._get_csrf_value()
         }
         res = self.zucc_http.post(url=url, data=data)
+
+
+if __name__ == '__main__':
+    from app import create_app
+
+    create_app().app_context().push()
+
+    ZuccSpider()
