@@ -39,7 +39,7 @@ class ZuccSpider(BaseSpider):
         if not self._judge_user(username):
             return {'success': False, 'data': []}
         accept_problem_list = []
-        url = 'http://acm.zucc.edu.cn/status.php?user_id={}'.format(username)
+        url = 'http://acm.zucc.edu.cn/status.php?user_id={}&jresult=4'.format(username)
         ok = False
         while not ok:
             res = self.zucc_http.get(url=url)
@@ -65,7 +65,7 @@ class ZuccSpider(BaseSpider):
                     'problem_pid': problem_id,
                     'accept_time': accept_time
                 })
-            new_url = 'http://acm.zucc.edu.cn/status.php?user_id={}&top={}'.format(username, next - 1)
+            new_url = 'http://acm.zucc.edu.cn/status.php?user_id={}&top={}&jresult=4'.format(username, next - 1)
             if new_url == url:
                 break
             url = new_url
