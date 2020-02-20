@@ -109,14 +109,3 @@ class ZuccSpider(BaseSpider):
             'csrf': self._get_csrf_value()
         }
         res = self.zucc_http.post(url=url, data=data)
-
-
-if __name__ == '__main__':
-    from app import create_app
-    from app.models.oj_username import OJUsername
-    oj_username = OJUsername()
-    oj_username.oj_username = '31801054'
-    create_app().app_context().push()
-
-    res = ZuccSpider().get_user_info(oj_username, {})
-    print(res)
