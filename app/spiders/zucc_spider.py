@@ -56,6 +56,7 @@ class ZuccSpider(BaseSpider):
                     continue
                 problem_id = tds[2].text
                 accept_time = tds[8].text
+                accept_time = re.findall(r'\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}', accept_time)[0]
                 if accept_problems.get('zucc-' + problem_id) == accept_time:
                     ok = True
                     break
@@ -112,7 +113,10 @@ class ZuccSpider(BaseSpider):
 
 if __name__ == '__main__':
     from app import create_app
-
+    from app.models.oj_username import OJUsername
+    oj_username = OJUsername()
+    oj_username.oj_username = '31801054'
     create_app().app_context().push()
 
-    ZuccSpider()
+    res = ZuccSpider().get_user_info(oj_username, {})
+    print(res)
