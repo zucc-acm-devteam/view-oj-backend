@@ -36,6 +36,7 @@ class SpiderHttp:
         url, data = self._before_request(url, params, data)
         res = self.sess.request(method, url=url, data=data, timeout=30)
         res = self._end_request(res, encoding)
+        print(url, res.status_code)
         return res
 
     @staticmethod
@@ -48,8 +49,6 @@ class SpiderHttp:
         :return: url，data元组
         """
         # 逻辑写这里
-        pass
-        print(url)
         return url, data
 
     @staticmethod
