@@ -10,6 +10,10 @@ from app.spiders.base_spider import BaseSpider
 class ZuccSpider(BaseSpider):
     zucc_http = SpiderHttp()
 
+    def __init__(self):
+        url = 'http://acm.zucc.edu.cn/'
+        self.zucc_http.get(url=url)
+
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         if not self._judge_user(username):
