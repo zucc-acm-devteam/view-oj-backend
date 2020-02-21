@@ -25,7 +25,7 @@ class LuoguHttp(SpiderHttp):
 
     @staticmethod
     def _end_request(res, encoding):
-        time.sleep(1)
+        time.sleep(2)
         return res
 
 
