@@ -9,7 +9,7 @@ from app.models.oj import OJ
 class Problem(Base):
     __tablename__ = 'problem'
 
-    fields = ['id', 'oj_id', 'oj', 'problem_pid', 'rating', 'url']
+    fields = ['id', 'oj', 'problem_pid', 'rating', 'url']
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     oj_id = Column(Integer, ForeignKey(OJ.id))
