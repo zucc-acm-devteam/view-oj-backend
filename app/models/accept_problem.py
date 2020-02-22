@@ -27,7 +27,7 @@ class AcceptProblem(Base):
 
     @property
     def referer_oj(self):
-        return OJ.get_by_id(self.oj_id)
+        return OJ.get_by_id(self.referer_oj_id)
 
     @classmethod
     def get_by_username_and_problem_id(cls, username, problem_id):
