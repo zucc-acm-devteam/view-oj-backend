@@ -57,4 +57,6 @@ class VjudgeSpider(BaseSpider):
             name = 'jisuanke'
         elif name == 'uvalive':
             name = 'uva'
+        elif name == 'libreoj':
+            name = 'loj'
         return name
