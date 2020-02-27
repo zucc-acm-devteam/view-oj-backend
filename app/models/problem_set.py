@@ -10,7 +10,6 @@ class ProblemSet(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
-    create_time = Column(DateTime)
 
     @property
     def problem_list(self):

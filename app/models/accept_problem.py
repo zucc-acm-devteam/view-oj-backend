@@ -4,6 +4,7 @@ from sqlalchemy import (Column, Date, DateTime, ForeignKey, Integer, String,
                         cast, func)
 
 from app.models.base import Base, db
+from app.models.oj import OJ
 from app.models.problem import Problem
 from app.models.user import User
 
@@ -11,17 +12,22 @@ from app.models.user import User
 class AcceptProblem(Base):
     __tablename__ = 'accept_problem'
 
-    fields = ['id', 'username', 'problem_id', 'problem', 'add_rating', 'create_time']
+    fields = ['id', 'username', 'referer_oj', 'problem', 'add_rating', 'create_time']
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), ForeignKey(User.username))
     problem_id = Column(Integer, ForeignKey(Problem.id))
+    referer_oj_id = Column(Integer, ForeignKey(OJ.id))
     add_rating = Column(Integer, nullable=False)
     create_time = Column(DateTime, nullable=False)
 
     @property
     def problem(self):
         return Problem.get_by_id(self.problem_id)
+
+    @property
+    def referer_oj(self):
+        return OJ.get_by_id(self.referer_oj_id)
 
     @classmethod
     def get_by_username_and_problem_id(cls, username, problem_id):

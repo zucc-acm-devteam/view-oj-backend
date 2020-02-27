@@ -87,7 +87,7 @@ def crawl_accept_problem(username, oj_id):
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
         task_crawl_problem_rating(problem.id)
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
-        accept_problem.modify(create_time=str_to_datetime(i['accept_time']))
+        accept_problem.modify(create_time=str_to_datetime(i['accept_time']), referer_oj_id=oj_id)
 
 
 def task_crawl_problem_rating(problem_id):
