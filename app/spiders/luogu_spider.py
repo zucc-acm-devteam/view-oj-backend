@@ -33,24 +33,27 @@ class LuoguSpider(BaseSpider):
     luogu_http = LuoguHttp()
 
     def __init__(self):
-        mapping = Mapping.get_by_id('luogu-cookie')
         try:
-            cookie = json.loads(mapping.value)
-            headers = {
-                'Cookie': Cookie.dict_to_str(cookie)
-            }
-            self.luogu_http.headers.update(headers)
-            assert self.check_login_status() is not None
-        except:
-            self.luogu_http.headers.update({'Cookie': None})
-            self.login(LUOGU_ID, LUOGU_PASSWORD)
-            assert self.check_login_status() is not None
+            self.check_cookie()
+        except AssertionError:
+            self.get_new_cookie()
+            self.check_cookie()
 
-            cookie = {}
-            for i in self.luogu_http.sess.cookies:
-                cookie[i.name] = i.value
+    def check_cookie(self):
+        self.luogu_http = LuoguHttp()
+        mapping = Mapping.get_by_id('luogu-cookie')
+        cookie = json.loads(mapping.value)
+        self.luogu_http.headers.update({'Cookie': Cookie.dict_to_str(cookie)})
+        assert self.check_login_status() is not None
 
-            mapping.modify(value=json.dumps(cookie, sort_keys=True))
+    def get_new_cookie(self):
+        self.luogu_http = LuoguHttp()
+        self.login(LUOGU_ID, LUOGU_PASSWORD)
+        assert self.check_login_status() is not None
+        cookie = {}
+        for i in self.luogu_http.sess.cookies:
+            cookie[i.name] = i.value
+        Mapping.get_by_id('luogu-cookie').modify(value=json.dumps(cookie, sort_keys=True))
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
@@ -68,6 +71,7 @@ class LuoguSpider(BaseSpider):
                     real_oj, problem_pid = self._change_problem_pid(i['problem']['pid'])
                     accept_time = timestamp_to_str(i['submitTime'])
                     if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
+                        finished = True
                         break
                     if real_oj != 'luogu-team':
                         accept_problem_list.append({
