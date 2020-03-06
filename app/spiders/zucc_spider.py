@@ -7,8 +7,17 @@ from app.libs.spider_http import SpiderHttp
 from app.spiders.base_spider import BaseSpider
 
 
+class ZuccHttp(SpiderHttp):
+    def __init__(self):
+        super().__init__()
+        headers = {
+            'Cookie': 'lang=cn'
+        }
+        self.headers.update(headers)
+
+
 class ZuccSpider(BaseSpider):
-    zucc_http = SpiderHttp()
+    zucc_http = ZuccHttp()
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
@@ -18,8 +27,6 @@ class ZuccSpider(BaseSpider):
         url = 'http://acm.zucc.edu.cn/status.php?user_id={}&jresult=4'.format(username)
         ok = False
         while not ok:
-            self.zucc_http = SpiderHttp()
-            self.zucc_http.get(url='http://acm.zucc.edu.cn/')
             res = self.zucc_http.get(url=url)
             soup = BeautifulSoup(res.text, 'lxml')
             trs = soup.find('tbody').find_all('tr')
