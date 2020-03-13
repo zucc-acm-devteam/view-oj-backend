@@ -59,6 +59,8 @@ class PintiaSpider(BaseSpider):
 
         oj_username.modify(oj_cookies=json.dumps(cookie, sort_keys=True))
 
+        self.check_in()
+
         accept_problem_list = []
 
         for problem_set_id, tag in self.problem_set:
@@ -121,3 +123,8 @@ class PintiaSpider(BaseSpider):
         if res.get('status') != 'ok':
             raise Exception(res.get('error'))
         return Cookie.str_to_dict(res['result'])
+
+    def check_in(self):
+        url = 'https://pintia.cn/api/users/checkin'
+        res = self.pintia_http.post(url=url).json()
+        print(res)
