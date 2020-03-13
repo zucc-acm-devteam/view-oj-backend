@@ -1,5 +1,6 @@
 import datetime
 
+from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.helper import str_to_datetime
 from app.models.accept_problem import AcceptProblem
 from app.models.oj import OJ
@@ -87,7 +88,7 @@ def crawl_accept_problem(username, oj_id):
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
         task_crawl_problem_rating(problem.id)
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
-        accept_problem.modify(create_time=str_to_datetime(i['accept_time']))
+        accept_problem.modify(create_time=str_to_datetime(i['accept_time']), referer_oj_id=oj_id)
 
 
 def task_crawl_problem_rating(problem_id):
@@ -100,8 +101,8 @@ def crawl_problem_rating(problem_id):
     oj = OJ.get_by_id(problem.oj_id)
     try:
         oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']()
+        rating = oj_spider.get_problem_info(problem.problem_pid)['rating']
     except:
-        return
+        rating = DEFAULT_PROBLEM_RATING
 
-    rating = oj_spider.get_problem_info(problem.problem_pid)['rating']
     problem.modify(rating=rating)

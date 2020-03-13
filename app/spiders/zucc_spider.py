@@ -15,23 +15,29 @@ class ZuccSpider(BaseSpider):
     zucc_http = SpiderHttp()
 
     def __init__(self):
-        mapping = Mapping.get_by_id('zucc-cookie')
         try:
-            cookie = json.loads(mapping.value)
-            headers = {
-                'Cookie': Cookie.dict_to_str(cookie)
-            }
-            self.zucc_http.headers.update(headers)
-            assert self.check_login_status() is not None
-        except:
-            self.login(ZUCC_ID, ZUCC_PASSWORD)
-            assert self.check_login_status() is not None
+            self.check_cookie()
+        except AssertionError:
+            self.get_new_cookie()
+            self.check_cookie()
 
+    def check_cookie(self):
+        self.zucc_http = SpiderHttp()
+        mapping = Mapping.get_by_id('zucc-cookie')
+        cookie = json.loads(mapping.value)
+        for k, v in cookie.items():
+            self.zucc_http.sess.cookies.set(k, v)
+        self.zucc_http.sess.cookies.set("lang", "cn")
+        assert self.check_login_status() == ZUCC_ID
+
+    def get_new_cookie(self):
+        self.zucc_http = SpiderHttp()
+        self.login(ZUCC_ID, ZUCC_PASSWORD)
+        assert self.check_login_status() == ZUCC_ID
         cookie = {}
         for i in self.zucc_http.sess.cookies:
             cookie[i.name] = i.value
-
-        mapping.modify(value=json.dumps(cookie, sort_keys=True))
+        Mapping.get_by_id('zucc-cookie').modify(value=json.dumps(cookie, sort_keys=True))
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
@@ -49,8 +55,13 @@ class ZuccSpider(BaseSpider):
                 break
             for tr in trs:
                 tds = tr.find_all('td')
+                next = int(tds[0].text)
+                status = tds[3].find_all('a')[0]['class']
+                if 'label-success' not in status:
+                    continue
                 problem_id = tds[2].text
                 accept_time = tds[8].text
+                accept_time = re.findall(r'\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}', accept_time)[0]
                 if accept_problems.get('zucc-' + problem_id) == accept_time:
                     ok = True
                     break
@@ -59,9 +70,10 @@ class ZuccSpider(BaseSpider):
                     'problem_pid': problem_id,
                     'accept_time': accept_time
                 })
-                next = int(tds[0].text)
-            url = 'http://acm.zucc.edu.cn/status.php?user_id={}&jresult=4&top={}'.format(username,
-                                                                                         next - 1)
+            new_url = 'http://acm.zucc.edu.cn/status.php?user_id={}&top={}&jresult=4'.format(username, next - 1)
+            if new_url == url:
+                break
+            url = new_url
         return {'success': True, 'data': accept_problem_list}
 
     def get_problem_info(self, problem_id):
@@ -106,7 +118,10 @@ class ZuccSpider(BaseSpider):
 
 if __name__ == '__main__':
     from app import create_app
+    from app.models.oj_username import OJUsername
 
     create_app().app_context().push()
-
-    ZuccSpider()
+    oj_username = OJUsername()
+    oj_username.oj_username = '31901172'
+    r = ZuccSpider().get_user_info(oj_username, {})
+    print(r)

@@ -11,7 +11,8 @@ class VjudgeSpider(BaseSpider):
         url = "https://vjudge.net/status/data/"
         start = 0
         length = 20
-        while True:
+        ok = False
+        while not ok:
             data = {
                 'un': username,
                 'start': start,
@@ -29,6 +30,7 @@ class VjudgeSpider(BaseSpider):
                 oj = self._change_oj_name(submission['oj'])
                 problem_id = submission['probNum']
                 if accept_problems.get('{}-{}'.format(oj, problem_id)) == accept_time:
+                    ok = True
                     break
                 accept_problem_list.append({
                     'oj': oj,
@@ -55,4 +57,6 @@ class VjudgeSpider(BaseSpider):
             name = 'jisuanke'
         elif name == 'uvalive':
             name = 'uva'
+        elif name == 'libreoj':
+            name = 'loj'
         return name

@@ -1,6 +1,5 @@
 import requests
 from requests import Response
-from tenacity import retry, stop_after_attempt, wait_fixed
 
 
 class SpiderHttp:
@@ -21,7 +20,6 @@ class SpiderHttp:
     def post(self, **kwargs):
         return self._request('POST', **kwargs)
 
-    @retry(wait=wait_fixed(10), stop=stop_after_attempt(5))
     def _request(self, method: str, url: str, params: dict = None, data: dict = None,
                  encoding: str = 'utf8', headers: dict = None) -> Response:
         """
@@ -38,6 +36,7 @@ class SpiderHttp:
         url, data = self._before_request(url, params, data)
         res = self.sess.request(method, url=url, data=data, timeout=30)
         res = self._end_request(res, encoding)
+        print(url, res.status_code)
         return res
 
     @staticmethod
@@ -50,8 +49,6 @@ class SpiderHttp:
         :return: url，data元组
         """
         # 逻辑写这里
-        pass
-        print(url)
         return url, data
 
     @staticmethod
