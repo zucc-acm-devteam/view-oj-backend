@@ -43,7 +43,8 @@ class LuoguSpider(BaseSpider):
         self.luogu_http = LuoguHttp()
         mapping = Mapping.get_by_id('luogu-cookie')
         cookie = json.loads(mapping.value)
-        self.luogu_http.headers.update({'Cookie': Cookie.dict_to_str(cookie)})
+        for k, v in cookie.items():
+            self.luogu_http.sess.cookies.set(k, v)
         assert self.check_login_status() is not None
 
     def get_new_cookie(self):
