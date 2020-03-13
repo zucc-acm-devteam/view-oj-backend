@@ -1,23 +1,43 @@
+import json
 import re
 
 from bs4 import BeautifulSoup
 
+from app.config.secure import ZUCC_ID, ZUCC_PASSWORD
 from app.config.setting import DEFAULT_PROBLEM_RATING
+from app.libs.cookie import Cookie
 from app.libs.spider_http import SpiderHttp
+from app.models.mapping import Mapping
 from app.spiders.base_spider import BaseSpider
 
 
-class ZuccHttp(SpiderHttp):
-    def __init__(self):
-        super().__init__()
-        headers = {
-            'Cookie': 'lang=cn'
-        }
-        self.headers.update(headers)
-
-
 class ZuccSpider(BaseSpider):
-    zucc_http = ZuccHttp()
+    zucc_http = SpiderHttp()
+
+    def __init__(self):
+        try:
+            self.check_cookie()
+        except AssertionError:
+            self.get_new_cookie()
+            self.check_cookie()
+
+    def check_cookie(self):
+        self.zucc_http = SpiderHttp()
+        mapping = Mapping.get_by_id('zucc-cookie')
+        cookie = json.loads(mapping.value)
+        for k, v in cookie.items():
+            self.zucc_http.sess.cookies.set(k, v)
+        self.zucc_http.sess.cookies.set("lang", "cn")
+        assert self.check_login_status() == ZUCC_ID
+
+    def get_new_cookie(self):
+        self.zucc_http = SpiderHttp()
+        self.login(ZUCC_ID, ZUCC_PASSWORD)
+        assert self.check_login_status() == ZUCC_ID
+        cookie = {}
+        for i in self.zucc_http.sess.cookies:
+            cookie[i.name] = i.value
+        Mapping.get_by_id('zucc-cookie').modify(value=json.dumps(cookie, sort_keys=True))
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
@@ -72,3 +92,36 @@ class ZuccSpider(BaseSpider):
         url = 'http://acm.zucc.edu.cn/userinfo.php?user={}'.format(username)
         res = self.zucc_http.get(url=url)
         return not re.findall(r"No such User!", res.text)
+
+    def check_login_status(self):
+        url = 'http://acm.zucc.edu.cn/template/bs3/profile.php'
+        res = self.zucc_http.get(url=url)
+        try:
+            return re.search(r'document\.getElementById\("profile"\)\.innerHTML="(.*)";', res.text).group(1)
+        except:
+            return None
+
+    def _get_csrf_value(self):
+        url = 'http://acm.zucc.edu.cn/csrf.php'
+        res = self.zucc_http.get(url=url)
+        return re.search(r'value="(.*?)"', res.text).group(1)
+
+    def login(self, username, password):
+        url = 'http://acm.zucc.edu.cn/login.php'
+        data = {
+            'user_id': username,
+            'password': password,
+            'csrf': self._get_csrf_value()
+        }
+        res = self.zucc_http.post(url=url, data=data)
+
+
+if __name__ == '__main__':
+    from app import create_app
+    from app.models.oj_username import OJUsername
+
+    create_app().app_context().push()
+    oj_username = OJUsername()
+    oj_username.oj_username = '31901172'
+    r = ZuccSpider().get_user_info(oj_username, {})
+    print(r)
