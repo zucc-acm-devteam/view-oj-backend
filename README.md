@@ -3,7 +3,7 @@
 
 前端项目地址: https://github.com/KeadinZhou/view-oj-web
 
-接口文档: https://www.showdoc.cc/417895562132382
+接口文档: https://www.showdoc.cc/656211405914875
 
 # 安装
 ```bash
