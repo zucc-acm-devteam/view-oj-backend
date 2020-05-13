@@ -19,7 +19,7 @@ class CodeforcesSpider(BaseSpider):
         res = SpiderHttp().get(url=url)
         res = json.loads(res.text)
         if res['status'] != 'OK':
-            return {'success': False, 'data': []}
+            return {'success': False, 'data': [], 'rating': -1}
         res = res['result']
         success = False
         for rec in res:
@@ -39,7 +39,7 @@ class CodeforcesSpider(BaseSpider):
                     'problem_pid': problem_pid,
                     'accept_time': accept_time
                 })
-        return {'success': success, 'data': accept_problem_list}
+        return {'success': success, 'data': accept_problem_list, 'rating': self.getrating(username)}
 
     def get_problem_info(self, problem_id):
         p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
@@ -80,3 +80,12 @@ class CodeforcesSpider(BaseSpider):
         stars = len(soup.find('tr', {'data-contestid': contest_id}).findAll('img'))
         mapping.modify(value=str(stars))
         return star_rating[stars]
+
+    @staticmethod
+    def getrating(username):
+        url = 'http://codeforces.com/api/user.info?handles={}'.format(username)
+        try:
+            res = SpiderHttp().get(url=url).json()
+            return res['result'][0]['rating']
+        except:
+            return -1
