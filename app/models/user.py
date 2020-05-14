@@ -40,15 +40,18 @@ class User(UserMixin, Base):
         for i in OJ.search(status=1, page_size=100)['data']:
             oj_username = None
             last_success_time = None
+            extra = None
             for j in res:
                 if j.oj_id == i.id:
                     oj_username = j.oj_username
                     last_success_time = j.last_success_time
+                    extra = j.extra
                     break
             r.append({
                 'oj': i,
                 'oj_username': oj_username,
-                'last_success_time': last_success_time
+                'last_success_time': last_success_time,
+                'extra': extra
             })
         return r
 

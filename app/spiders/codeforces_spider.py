@@ -1,4 +1,3 @@
-import datetime
 import json
 import re
 
@@ -14,12 +13,18 @@ from app.spiders.base_spider import BaseSpider
 class CodeforcesSpider(BaseSpider):
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
+        rating = self.get_rating(username)
+        extra = json.loads(oj_username.extra)
+        extra['rating'] = rating
+        extra = json.dumps(extra)
+        oj_username.modify(extra=extra)
+
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)
         res = SpiderHttp().get(url=url)
         res = json.loads(res.text)
         if res['status'] != 'OK':
-            return {'success': False, 'data': [], 'rating': -1}
+            return {'success': False, 'data': []}
         res = res['result']
         success = False
         for rec in res:
@@ -39,7 +44,7 @@ class CodeforcesSpider(BaseSpider):
                     'problem_pid': problem_pid,
                     'accept_time': accept_time
                 })
-        return {'success': success, 'data': accept_problem_list, 'rating': self.getrating(username)}
+        return {'success': success, 'data': accept_problem_list}
 
     def get_problem_info(self, problem_id):
         p = re.match('^([0-9]+)([a-zA-Z]+[0-9]*)$', problem_id)
@@ -82,7 +87,7 @@ class CodeforcesSpider(BaseSpider):
         return star_rating[stars]
 
     @staticmethod
-    def getrating(username):
+    def get_rating(username):
         url = 'http://codeforces.com/api/user.info?handles={}'.format(username)
         try:
             res = SpiderHttp().get(url=url).json()
