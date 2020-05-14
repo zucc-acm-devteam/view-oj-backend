@@ -14,11 +14,13 @@ class CodeforcesSpider(BaseSpider):
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         rating = self.get_rating(username)
+        contest_num = self.get_contest_num(username)
         try:
             extra = json.loads(oj_username.extra)
         except TypeError:
             extra = dict()
         extra['rating'] = rating
+        extra['contest_num'] = contest_num
         extra = json.dumps(extra)
         oj_username.modify(extra=extra)
 
@@ -95,5 +97,14 @@ class CodeforcesSpider(BaseSpider):
         try:
             res = SpiderHttp().get(url=url).json()
             return res['result'][0]['rating']
+        except:
+            return 0
+
+    @staticmethod
+    def get_contest_num(username):
+        url = 'http://codeforces.com/api/user.rating?handle={}'.format(username)
+        try:
+            res = SpiderHttp().get(url=url).json()
+            return len(res['result'])
         except:
             return 0
