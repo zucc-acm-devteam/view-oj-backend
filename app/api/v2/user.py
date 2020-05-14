@@ -65,8 +65,8 @@ def search_user_api():
     })
 
 
-@api.route("/rank", methods=['GET'])
-def get_user_rank_api():
+@api.route("/rating", methods=['GET'])
+def get_user_rating_api():
     res = User.search(page_size=1000)['data']
     fields = User.fields.copy()
     fields.extend(['rating', 'codeforces_rating'])
