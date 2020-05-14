@@ -96,4 +96,4 @@ class CodeforcesSpider(BaseSpider):
             res = SpiderHttp().get(url=url).json()
             return res['result'][0]['rating']
         except:
-            return -1
+            return 0

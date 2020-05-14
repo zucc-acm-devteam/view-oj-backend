@@ -17,7 +17,7 @@ def get_user_api(id_):
         raise NotFound('User not found')
 
     fields = User.fields.copy()
-    fields.extend(['rating', 'oj_username', 'problem_distributed', 'rating_trend'])
+    fields.extend(['rating', 'oj_username', 'problem_distributed', 'rating_trend', 'codeforces_rating'])
     user.fields = fields
     return jsonify({
         "code": 0,
@@ -59,6 +59,18 @@ def modify_user_api(id_):
 def search_user_api():
     form = SearchUserForm().validate_for_api().data_
     res = User.search(**form)
+    return jsonify({
+        'code': 0,
+        'data': res
+    })
+
+
+@api.route("/rank", methods=['GET'])
+def get_user_rank_api():
+    res = User.search(page_size=1000)['data']
+    fields = ['rating', 'codeforces_rating']
+    for i in res:
+        i.fields = fields
     return jsonify({
         'code': 0,
         'data': res
