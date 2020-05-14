@@ -14,7 +14,10 @@ class CodeforcesSpider(BaseSpider):
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
         rating = self.get_rating(username)
-        extra = json.loads(oj_username.extra)
+        try:
+            extra = json.loads(oj_username.extra)
+        except TypeError:
+            extra = dict()
         extra['rating'] = rating
         extra = json.dumps(extra)
         oj_username.modify(extra=extra)
