@@ -1,11 +1,11 @@
 from celery import Celery, platforms
 
-from app.config.secure import BROKER_2_URL
+from app.config.secure import BROKER_URL
 
 platforms.C_FORCE_ROOT = True
-celery = Celery('tasks-single')
+celery = Celery('task-single')
 celery.config_from_object('app.config.secure')
-celery.conf['BROKER_URL'] = BROKER_2_URL
+celery.conf['BROKER_URL'] = BROKER_URL
 
 
 @celery.task
