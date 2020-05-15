@@ -23,8 +23,8 @@ from app.spiders.zucc_spider import ZuccSpider
 
 
 def task_crawl_accept_problem(username=None, oj_id=None):
-    from task.task import task_f
-    from task.task_single import task_single_f
+    from task.tasks import task_f
+    from task.tasks_single import task_single_f
     if username:
         user_list = [User.get_by_id(username)]
     else:
@@ -92,7 +92,7 @@ def crawl_accept_problem(username, oj_id):
 
 
 def task_crawl_problem_rating(problem_id):
-    from task.task import task_f
+    from task.tasks import task_f
     task_f.delay(crawl_problem_rating, problem_id=problem_id)
 
 
