@@ -17,7 +17,7 @@ def get_user_api(id_):
         raise NotFound('User not found')
 
     fields = User.fields.copy()
-    fields.extend(['rating', 'oj_username', 'problem_distributed', 'rating_trend', 'codeforces_rating'])
+    fields.extend(['rating', 'oj_username', 'problem_distributed', 'rating_trend', 'codeforces_rating', 'contest_num'])
     user.fields = fields
     return jsonify({
         "code": 0,
@@ -69,7 +69,7 @@ def search_user_api():
 def get_user_rating_api():
     res = User.search(page_size=1000)['data']
     fields = User.fields.copy()
-    fields.extend(['rating', 'codeforces_rating'])
+    fields.extend(['rating', 'codeforces_rating', 'contest_num'])
     for i in res:
         i.fields = fields
     return jsonify({

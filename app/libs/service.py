@@ -20,6 +20,8 @@ def calculate_user_rating(username):
         add_rating = calculate_user_add_rating(rating, i.problem.rating)
         i.modify(add_rating=add_rating)
         rating += add_rating
+    user = User.get_by_id(username)
+    user.modify(rating=rating)
 
 
 def calculate_user_add_rating(user_rating, problem_rating):

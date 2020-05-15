@@ -1,7 +1,6 @@
 from flask import jsonify
 from flask_login import login_required
 
-from app import redis1, redis2
 from app.libs.error_code import CreateSuccess
 from app.libs.red_print import RedPrint
 from app.libs.service import task_calculate_user_rating
@@ -36,7 +35,6 @@ def get_task_summary_api():
     return jsonify({
         'code': 0,
         'data': {
-            "redis1": redis1.llen('celery'),
-            "redis2": redis2.llen('celery')
+            "task1": 0,
         }
     })
