@@ -1,3 +1,5 @@
+import json
+
 from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import Column, Date, Integer, String, cast, func
@@ -40,15 +42,18 @@ class User(UserMixin, Base):
         for i in OJ.search(status=1, page_size=100)['data']:
             oj_username = None
             last_success_time = None
+            extra = None
             for j in res:
                 if j.oj_id == i.id:
                     oj_username = j.oj_username
                     last_success_time = j.last_success_time
+                    extra = j.extra
                     break
             r.append({
                 'oj': i,
                 'oj_username': oj_username,
-                'last_success_time': last_success_time
+                'last_success_time': last_success_time,
+                'extra': extra
             })
         return r
 
@@ -79,6 +84,15 @@ class User(UserMixin, Base):
             db.session.query(cast(AcceptProblem.create_time, Date), func.sum(AcceptProblem.add_rating)).filter(
                 AcceptProblem.username == self.username
             ).group_by(cast(AcceptProblem.create_time, Date)).all()]
+
+    @property
+    def codeforces_rating(self):
+        from app.models.oj_username import OJUsername
+        try:
+            rating = json.loads(OJUsername.search(username=self.username, oj_id=2)['data'][0].extra)['rating']
+        except:
+            rating = 0
+        return rating
 
     def check_password(self, password):
         return self.password == password
