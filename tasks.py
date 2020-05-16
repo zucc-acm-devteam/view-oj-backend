@@ -26,3 +26,11 @@ def task_f(func, **kwargs):
     with create_app().app_context():
         print(func, kwargs)
         func(**kwargs)
+
+
+@celery.task
+def task_single_f(func, **kwargs):
+    from app import create_app
+    with create_app().app_context():
+        print(func, kwargs)
+        func(**kwargs)

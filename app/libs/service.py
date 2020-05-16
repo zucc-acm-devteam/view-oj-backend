@@ -5,7 +5,7 @@ from app.models.user import User
 
 
 def task_calculate_user_rating(username=None):
-    from task.tasks import task_f
+    from tasks import task_f
     if username:
         user_list = [User.get_by_id(username)]
     else:

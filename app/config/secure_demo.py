@@ -18,11 +18,11 @@ CELERY_QUEUES = (
     Queue("task_single", routing_key="task_single")
 )
 CELERY_ROUTES = {
-    'task.task.task_f': {
+    'tasks.task_f': {
         'queue': 'task',
         'routing_key': 'task',
     },
-    'task.task_single.task_single_f': {
+    'tasks.task_single_f': {
         'queue': 'task_single',
         'routing_key': 'task_single',
     },
