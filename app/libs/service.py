@@ -5,7 +5,7 @@ from app.models.user import User
 
 
 def task_calculate_user_rating(username=None):
-    from task.task import task_f
+    from tasks import task_f
     if username:
         user_list = [User.get_by_id(username)]
     else:
@@ -20,6 +20,8 @@ def calculate_user_rating(username):
         add_rating = calculate_user_add_rating(rating, i.problem.rating)
         i.modify(add_rating=add_rating)
         rating += add_rating
+    user = User.get_by_id(username)
+    user.modify(rating=rating)
 
 
 def calculate_user_add_rating(user_rating, problem_rating):

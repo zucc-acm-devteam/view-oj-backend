@@ -1,6 +1,3 @@
-import json
-
-from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import Column, Date, Integer, String, cast, func
 
@@ -18,20 +15,15 @@ class User(UserMixin, Base):
     nickname = Column(String(100), nullable=False)
     password = Column(String(100), nullable=False)
     group = Column(String(100))
-    permission = Column(Integer, nullable=False)
-    status = Column(Integer, nullable=False)
+    permission = Column(Integer, nullable=False, default=0)
+    status = Column(Integer, nullable=False, default=0)
+    rating = Column(Integer, nullable=False, default=0)
+    codeforces_rating = Column(Integer, nullable=False, default=0)
+    contest_num = Column(Integer, nullable=False, default=0)
 
     @property
     def id(self):
         return self.username
-
-    @property
-    def rating(self):
-        from app.models.accept_problem import AcceptProblem
-        add_rating = db.session.query(func.sum(AcceptProblem.add_rating)) \
-            .filter(AcceptProblem.username == self.username).all()[0][0]
-        add_rating = 0 if add_rating is None else int(add_rating)
-        return current_app.config['DEFAULT_USER_RATING'] + add_rating
 
     @property
     def oj_username(self):
@@ -42,18 +34,15 @@ class User(UserMixin, Base):
         for i in OJ.search(status=1, page_size=100)['data']:
             oj_username = None
             last_success_time = None
-            extra = None
             for j in res:
                 if j.oj_id == i.id:
                     oj_username = j.oj_username
                     last_success_time = j.last_success_time
-                    extra = j.extra
                     break
             r.append({
                 'oj': i,
                 'oj_username': oj_username,
-                'last_success_time': last_success_time,
-                'extra': extra
+                'last_success_time': last_success_time
             })
         return r
 
@@ -83,16 +72,7 @@ class User(UserMixin, Base):
         } for i in
             db.session.query(cast(AcceptProblem.create_time, Date), func.sum(AcceptProblem.add_rating)).filter(
                 AcceptProblem.username == self.username
-            ).group_by(cast(AcceptProblem.create_time, Date)).all()]
-
-    @property
-    def codeforces_rating(self):
-        from app.models.oj_username import OJUsername
-        try:
-            rating = json.loads(OJUsername.search(username=self.username, oj_id=2)['data'][0].extra)['rating']
-        except:
-            rating = 0
-        return rating
+            ).group_by(cast(AcceptProblem.create_time, Date)).order_by(cast(AcceptProblem.create_time, Date)).all()]
 
     def check_password(self, password):
         return self.password == password

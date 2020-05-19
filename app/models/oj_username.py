@@ -14,7 +14,6 @@ class OJUsername(Base):
     oj_password = Column(String(100))
     oj_cookies = Column(String(10000))
     last_success_time = Column(DateTime)
-    extra = Column(Text)
 
     @classmethod
     def get_by_username_and_oj_id(cls, username, oj_id):

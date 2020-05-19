@@ -1,21 +1,32 @@
+from kombu import Queue
+
 # 定义数据库信息
-SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:root@127.0.0.1:3306/view-oj"
+SQLALCHEMY_DATABASE_URI = ""
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # 定义flask信息
-SECRET_KEY = '123456'
+SECRET_KEY = '123'
 
 # 定义celery信息
-BROKER_1_URL = 'redis://127.0.0.1:6379/1'
-BROKER_2_URL = 'redis://127.0.0.1:6379/2'
+BROKER_URL = ''
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_ACCEPT_CONTENT = ['pickle']
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
-
-# 定义redis信息
-REDIS_1_URL = 'redis://127.0.0.1:6379/1'
-REDIS_2_URL = 'redis://127.0.0.1:6379/2'
+CELERY_QUEUES = (
+    Queue("task", routing_key="task"),
+    Queue("task_single", routing_key="task_single")
+)
+CELERY_ROUTES = {
+    'tasks.task_f': {
+        'queue': 'task',
+        'routing_key': 'task',
+    },
+    'tasks.task_single_f': {
+        'queue': 'task_single',
+        'routing_key': 'task_single',
+    },
+}
 
 # 定义账号
 ZUCC_ID = ''

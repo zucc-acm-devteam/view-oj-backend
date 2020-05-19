@@ -7,6 +7,7 @@ from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.helper import timestamp_to_str
 from app.libs.spider_http import SpiderHttp
 from app.models.mapping import Mapping
+from app.models.user import User
 from app.spiders.base_spider import BaseSpider
 
 
@@ -15,14 +16,8 @@ class CodeforcesSpider(BaseSpider):
         username = oj_username.oj_username
         rating = self.get_rating(username)
         contest_num = self.get_contest_num(username)
-        try:
-            extra = json.loads(oj_username.extra)
-        except TypeError:
-            extra = dict()
-        extra['rating'] = rating
-        extra['contest_num'] = contest_num
-        extra = json.dumps(extra)
-        oj_username.modify(extra=extra)
+        user = User.get_by_id(oj_username.username)
+        user.modify(codeforces_rating=rating, contest_num=contest_num)
 
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)

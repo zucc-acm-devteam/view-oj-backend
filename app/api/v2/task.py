@@ -1,7 +1,7 @@
 from flask import jsonify
 from flask_login import login_required
 
-from app import redis1, redis2
+from app import db
 from app.libs.error_code import CreateSuccess
 from app.libs.red_print import RedPrint
 from app.libs.service import task_calculate_user_rating
@@ -33,10 +33,16 @@ def create_task_api():
 
 @api.route("/summary", methods=['GET'])
 def get_task_summary_api():
+    res = db.session.execute("select count(*) from kombu_message where visible = 1 and queue_id = 1")
+    res = res.fetchone()[0]
+    task1 = res
+    res = db.session.execute("select count(*) from kombu_message where visible = 1 and queue_id = 2")
+    res = res.fetchone()[0]
+    task2 = res
     return jsonify({
         'code': 0,
         'data': {
-            "redis1": redis1.llen('celery'),
-            "redis2": redis2.llen('celery')
+            "redis1": task1,
+            "redis2": task2,
         }
     })

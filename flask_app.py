@@ -20,6 +20,7 @@ def framework_error(e):
         # 调试模式
         # log
         if not app.debug:
+            print(e)
             return ServerError()
         else:
             raise e
