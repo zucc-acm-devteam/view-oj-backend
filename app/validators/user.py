@@ -15,6 +15,7 @@ class CreateUserForm(BaseForm):
 
 class ModifyUserForm(BaseForm):
     nickname = StringField()
+    old_password = StringField()
     password = StringField()
     group = StringField()
     permission = IntegerField()

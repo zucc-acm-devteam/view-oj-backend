@@ -40,16 +40,18 @@ def create_user_api():
 @api.route("/<string:id_>", methods=['PATCH'])
 @login_required
 def modify_user_api(id_):
+    user = User.get_by_id(id_)
+    if user is None:
+        raise NotFound('User not found')
+
     form = ModifyUserForm().validate_for_api().data_
     if current_user.permission != 1:
         if current_user.id != id_:
             raise Forbidden()
         if form['group'] or form['permission'] or form['status']:
             raise Forbidden()
-
-    user = User.get_by_id(id_)
-    if user is None:
-        raise NotFound('User not found')
+        if form['password'] and not user.check_password(form['old_password']):
+            raise Forbidden()
 
     user.modify(**form)
     raise Success('User has been modified')
