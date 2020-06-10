@@ -21,9 +21,10 @@ def create_oj_username():
     if res['meta']['count'] == 1:
         oj_username = res['data'][0]
         if form['oj_username']:
-            oj_username.modify(oj_username=form['oj_username'])
+            oj_username.modify(oj_username=form['oj_username'], oj_password=form['oj_password'])
         else:
             oj_username.delete()
     else:
-        OJUsername.create(oj_id=form['oj_id'], username=form['username'], oj_username=form['oj_username'])
+        OJUsername.create(oj_id=form['oj_id'], username=form['username'], oj_username=form['oj_username'],
+                          oj_password=form['oj_password'])
     raise Success('OJ username has been created')

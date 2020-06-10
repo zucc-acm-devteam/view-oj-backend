@@ -9,6 +9,7 @@ class CreateOJUsernameForm(BaseForm):
     oj_id = IntegerField(validators=[DataRequired(message='OJ id cannot be empty')])
     username = StringField(validators=[DataRequired(message='Username cannot be empty')])
     oj_username = StringField()
+    oj_password = StringField()
 
     def validate_oj_id(self, value):
         oj = OJ.get_by_id(self.oj_id.data)
