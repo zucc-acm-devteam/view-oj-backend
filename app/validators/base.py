@@ -39,11 +39,13 @@ class SearchForm(BaseForm):
 
     def validate_page(self, value):
         if self.page.data:
+            self.page.data = int(self.page.data)
             if self.page.data <= 0:
                 raise ValidationError('Page must >= 1')
 
     def validate_page_size(self, value):
         if self.page_size.data:
+            self.page_size.data = int(self.page_size.data)
             if self.page_size.data > 100:
                 raise ValidationError('Page size must <= 100')
 
