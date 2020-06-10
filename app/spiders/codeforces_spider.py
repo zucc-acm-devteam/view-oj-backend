@@ -89,17 +89,11 @@ class CodeforcesSpider(BaseSpider):
     @staticmethod
     def get_rating(username):
         url = 'http://codeforces.com/api/user.info?handles={}'.format(username)
-        try:
-            res = SpiderHttp().get(url=url).json()
-            return res['result'][0]['rating']
-        except:
-            return 0
+        res = SpiderHttp().get(url=url).json()
+        return res['result'][0]['rating']
 
     @staticmethod
     def get_contest_num(username):
         url = 'http://codeforces.com/api/user.rating?handle={}'.format(username)
-        try:
-            res = SpiderHttp().get(url=url).json()
-            return len(res['result'])
-        except:
-            return 0
+        res = SpiderHttp().get(url=url).json()
+        return len(res['result'])
