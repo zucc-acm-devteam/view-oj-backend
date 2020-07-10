@@ -11,6 +11,12 @@ api = RedPrint('accept_problem')
 @api.route("", methods=['GET'])
 def search_accept_problem_api():
     form = SearchAcceptProblemForm().validate_for_api().data_
+    order = form['order']
+    if order is None:
+        order = dict()
+    if not hasattr(order, 'create_time'):
+        order['create_time'] = 'desc'
+    form['order'] = order
     return jsonify({
         'code': 0,
         'data': {
