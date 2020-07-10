@@ -13,7 +13,7 @@ api = RedPrint('oj_username')
 def create_oj_username():
     # 创建 修改 删除
     form = CreateOJUsernameForm().validate_for_api().data_
-    if current_user.permission != -1:
+    if current_user.permission != 1:
         if current_user.id != form['username']:
             raise Forbidden()
 
