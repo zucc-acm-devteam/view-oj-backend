@@ -32,7 +32,7 @@ class LojSpider(BaseSpider):
                 bottom = data['submissionId']
                 if accept_problems.get('loj-' + problem_id) == accept_time:
                     ok = True
-                    break
+                    continue
                 accept_problem_list.append({
                     'oj': 'loj',
                     'problem_pid': problem_id,

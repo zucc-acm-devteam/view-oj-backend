@@ -31,7 +31,7 @@ class PojSpider(BaseSpider):
                 top = tds[0].text
                 if accept_problems.get('poj-' + problem_id) == accept_time:
                     ok = True
-                    break
+                    continue
                 accept_problem_list.append({
                     'oj': 'poj',
                     'problem_pid': problem_id,

@@ -38,7 +38,7 @@ class HysbzSpider(BaseSpider):
                 accept_time = tds[8].text
                 if accept_problems.get('hysbz-' + problem_id) == accept_time:
                     ok = True
-                    break
+                    continue
                 accept_problem_list.append({
                     'oj': 'hysbz',
                     'problem_pid': problem_id,

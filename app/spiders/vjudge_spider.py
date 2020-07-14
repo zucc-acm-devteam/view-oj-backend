@@ -31,7 +31,7 @@ class VjudgeSpider(BaseSpider):
                 problem_id = submission['probNum']
                 if accept_problems.get('{}-{}'.format(oj, problem_id)) == accept_time:
                     ok = True
-                    break
+                    continue
                 accept_problem_list.append({
                     'oj': oj,
                     'problem_pid': problem_id,

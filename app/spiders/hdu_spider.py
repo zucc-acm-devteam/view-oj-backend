@@ -28,7 +28,7 @@ class HduSpider(BaseSpider):
                     problem_pid = tds[3].text
                     if accept_problems.get('hdu-' + problem_pid) == accept_time:
                         finished = True
-                        break
+                        continue
                     accept_problem_dict[problem_pid] = accept_time
             if finished:
                 break

@@ -37,7 +37,7 @@ class NowcoderSpider(BaseSpider):
                 problem_id = re.findall(r'/acm/problem/(\d+)', tds[1].find('a')['href'])[0]
                 if accept_problems.get('nowcoder-' + problem_id) == accept_time:
                     ok = True
-                    break
+                    continue
                 time = accept_problems.get('nowcoder-' + problem_id)
                 if time is None or time >= accept_time:
                     accept_problems['nowcoder-' + problem_id] = accept_time

@@ -38,7 +38,7 @@ class CodeforcesSpider(BaseSpider):
                     problem_pid = '{}{}'.format(rec['problem']['contestId'], rec['problem']['index'])
                 accept_time = timestamp_to_str(rec['creationTimeSeconds'])
                 if accept_problems.get("codeforces-{}".format(problem_pid)) == accept_time:
-                    break
+                    continue
                 accept_problem_list.append({
                     'oj': 'codeforces',
                     'problem_pid': problem_pid,

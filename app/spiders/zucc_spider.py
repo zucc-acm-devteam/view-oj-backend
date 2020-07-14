@@ -64,7 +64,7 @@ class ZuccSpider(BaseSpider):
                 accept_time = re.findall(r'\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}', accept_time)[0]
                 if accept_problems.get('zucc-' + problem_id) == accept_time:
                     ok = True
-                    break
+                    continue
                 accept_problem_list.append({
                     'oj': 'zucc',
                     'problem_pid': problem_id,

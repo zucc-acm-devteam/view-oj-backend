@@ -73,7 +73,7 @@ class LuoguSpider(BaseSpider):
                     accept_time = timestamp_to_str(i['submitTime'])
                     if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
                         finished = True
-                        break
+                        continue
                     if real_oj != 'luogu-team':
                         accept_problem_list.append({
                             'oj': real_oj,
