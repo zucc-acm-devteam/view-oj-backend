@@ -29,9 +29,9 @@ class User(UserMixin, Base):
     def oj_username(self):
         from app.models.oj_username import OJUsername
         from app.models.oj import OJ
-        res = OJUsername.search(username=self.username, page_size=100)['data']
+        res = OJUsername.search(username=self.username, page_size=-1)['data']
         r = list()
-        for i in OJ.search(status=1, page_size=100)['data']:
+        for i in OJ.search(status=1, page_size=-1)['data']:
             oj_username = None
             last_success_time = None
             for j in res:
@@ -52,7 +52,7 @@ class User(UserMixin, Base):
         from app.models.oj import OJ
         from app.models.problem import Problem
         res = []
-        oj_list = OJ.search(page_size=1000)['data']
+        oj_list = OJ.search(page_size=-1)['data']
         for i in oj_list:
             res.append({
                 'oj': i,

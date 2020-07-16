@@ -31,7 +31,7 @@ def search_accept_problem_summary_api():
     from app.models.user import User
     form = SearchAcceptProblemSummaryForm().validate_for_api().data_
     res = []
-    for i in User.search(status=1, page_size=1000)['data']:
+    for i in User.search(status=1, page_size=-1)['data']:
         res.append({
             'user': i,
             'num': AcceptProblem.search(username=i.username, **form, page_size=1)['meta']['count']

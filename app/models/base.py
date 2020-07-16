@@ -110,7 +110,8 @@ class Base(db.Model):
             }
         }
 
-        res = res.offset((page - 1) * page_size).limit(page_size)
+        if page_size != -1:
+            res = res.offset((page - 1) * page_size).limit(page_size)
         res = res.all()
         data['data'] = res
         return data

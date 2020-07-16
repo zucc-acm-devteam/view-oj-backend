@@ -27,11 +27,11 @@ def task_crawl_accept_problem(username=None, oj_id=None):
     if username:
         user_list = [User.get_by_id(username)]
     else:
-        user_list = User.search(status=1, page_size=1000)['data']
+        user_list = User.search(status=1, page_size=-1)['data']
     if oj_id:
         oj_id_list = [OJ.get_by_id(oj_id)]
     else:
-        oj_id_list = OJ.search(status=1, page_size=100)['data']
+        oj_id_list = OJ.search(status=1, page_size=-1)['data']
 
     for user in user_list:
         for oj in oj_id_list:
@@ -57,7 +57,7 @@ def crawl_accept_problem(username, oj_id):
 
     accept_problems = dict()
 
-    for i in AcceptProblem.search(username=username, page_size=10000)['data']:
+    for i in AcceptProblem.search(username=username, page_size=-1)['data']:
         accept_problems["{}-{}".format(i.problem.oj.name, i.problem.problem_pid)] = \
             datetime.datetime.strftime(i.create_time, '%Y-%m-%d %H:%M:%S')
 

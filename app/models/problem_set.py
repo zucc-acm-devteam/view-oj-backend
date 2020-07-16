@@ -16,7 +16,7 @@ class ProblemSet(Base):
         from app.models.problem import Problem
         from app.models.problem_relationship import ProblemRelationship
         r = list()
-        for i in ProblemRelationship.search(problem_set_id=self.id, page_size=1000)['data']:
+        for i in ProblemRelationship.search(problem_set_id=self.id, page_size=-1)['data']:
             r.append(Problem.get_by_id(i.problem_id))
         return r
 
@@ -25,7 +25,7 @@ class ProblemSet(Base):
         from app.models.accept_problem import AcceptProblem
         from app.models.user import User
         res = []
-        user_list = User.search(status=1, page_size=1000)['data']
+        user_list = User.search(status=1, page_size=-1)['data']
         for i in user_list:
             res.append({
                 'user': i,
@@ -52,7 +52,7 @@ class ProblemSet(Base):
         from app.models.problem import Problem
         from app.models.problem_relationship import ProblemRelationship
         super().modify(**kwargs)
-        for i in ProblemRelationship.search(problem_set_id=self.id, page_size=1000)['data']:
+        for i in ProblemRelationship.search(problem_set_id=self.id, page_size=-1)['data']:
             i.delete()
         for i in kwargs['problem_list']:
             oj_name, problem_pid = i.split('-', 1)
