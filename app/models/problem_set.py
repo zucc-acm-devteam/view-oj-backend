@@ -59,3 +59,9 @@ class ProblemSet(Base):
             oj = OJ.get_by_name(oj_name)
             problem = Problem.get_by_oj_id_and_problem_pid(oj.id, problem_pid)
             ProblemRelationship.create(problem_id=problem.id, problem_set_id=self.id)
+
+    def delete(self):
+        from app.models.problem_relationship import ProblemRelationship
+        for i in ProblemRelationship.search(problem_set_id=self.id, page_size=-1)['data']:
+            i.delete()
+        super().delete()
