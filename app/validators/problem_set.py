@@ -8,7 +8,7 @@ from app.validators.base import BaseForm
 
 
 class CreateProblemSetForm(BaseForm):
-    name = StringField(validators=[DataRequired(message='Username cannot be empty')])
+    name = StringField(validators=[DataRequired(message='Problem set name cannot be empty')])
     problem_list = StringField(validators=[DataRequired(message='Problem list cannot be empty')])
 
     def validate_problem_list(self, value):
