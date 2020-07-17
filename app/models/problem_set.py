@@ -51,6 +51,10 @@ class ProblemSet(Base):
         from app.models.oj import OJ
         from app.models.problem import Problem
         from app.models.problem_relationship import ProblemRelationship
+        if kwargs['problem_list'] is None:
+            kwargs.pop('problem_list')
+            super().modify(**kwargs)
+            return
         super().modify(**kwargs)
         for i in ProblemRelationship.search(problem_set_id=self.id, page_size=-1)['data']:
             i.delete()
