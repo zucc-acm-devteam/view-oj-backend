@@ -5,10 +5,29 @@ from app.libs.auth import admin_only
 from app.libs.error_code import CreateSuccess, DeleteSuccess, NotFound, Success
 from app.libs.red_print import RedPrint
 from app.models.problem_set import ProblemSet
+from app.models.oj import OJ
 from app.validators.problem_set import (CreateProblemSetForm,
                                         ModifyProblemSetForm)
 
 api = RedPrint('problem_set')
+
+
+@api.route("/valid_oj", methods=['GET'])
+def get_oj_list():
+    oj_list = OJ.search(status=1, page_size=-1)['data']
+    return jsonify({
+        'code': 0,
+        'data': oj_list
+    })
+
+
+@api.route("/summary", methods=['GET'])
+def get_summary():
+    problem_set_list = ProblemSet.search(page_size=-1, order={'id': 'desc'})['data']
+    return jsonify({
+        'code': 0,
+        'data': problem_set_list
+    })
 
 
 @api.route("/<int:id_>", methods=['GET'])
