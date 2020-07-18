@@ -4,8 +4,8 @@ from flask_login import login_required
 from app.libs.auth import admin_only
 from app.libs.error_code import CreateSuccess, DeleteSuccess, NotFound, Success
 from app.libs.red_print import RedPrint
-from app.models.problem_set import ProblemSet
 from app.models.oj import OJ
+from app.models.problem_set import ProblemSet
 from app.validators.problem_set import (CreateProblemSetForm,
                                         ModifyProblemSetForm)
 
