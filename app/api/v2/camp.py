@@ -226,7 +226,7 @@ def modify_course_username_api(id_):
         form['username'],
         id_
     )
-    if form['oj_username'] == '':
+    if form['oj_username'] == '' or form['oj_username'] is None:
         if course_oj_username is not None:
             course_oj_username.delete()
     elif course_oj_username is None:
