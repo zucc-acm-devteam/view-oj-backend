@@ -226,8 +226,9 @@ def modify_course_username_api(id_):
         form['username'],
         id_
     )
-    if course_oj_username and form['oj_username'] == '':
-        course_oj_username.delete()
+    if form['oj_username'] == '':
+        if course_oj_username is not None:
+            course_oj_username.delete()
     elif course_oj_username is None:
         CourseOJUsername.create(
             oj_id=course.camp_oj_id,
