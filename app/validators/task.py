@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, ValidationError
 from app.models.oj import OJ
 from app.models.problem import Problem
 from app.models.user import User
+from app.models.camp_models.course import Course
 from app.validators.base import BaseForm
 
 
@@ -35,6 +36,12 @@ class CreateTaskForm(BaseForm):
                 raise ValidationError('kwargs missing parameters')
             if Problem.get_by_id(self.kwargs.data['problem_id']) is None:
                 raise ValidationError('Problem does not exist')
+        elif self.type.data == 'crawl_course_info':
+            if self.kwargs.data is not None:
+                if self.kwargs.data is None or self.kwargs.data.get('course_id') is None:
+                    raise ValidationError('kwargs missing parameters')
+                if Course.get_by_id(self.kwargs.data['course_id']) is None:
+                    raise ValidationError('Course does not exist')
         elif self.type.data == 'calculate_user_rating':
             if self.kwargs.data is not None:
                 if self.kwargs.data.get('username') is None:

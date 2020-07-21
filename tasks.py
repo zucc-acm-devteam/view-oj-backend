@@ -2,7 +2,7 @@ from celery import Celery, platforms
 
 from app.config.secure import BROKER_URL
 from app.libs.service import task_calculate_user_rating
-from app.libs.spider_service import task_crawl_accept_problem
+from app.libs.spider_service import task_crawl_accept_problem, task_crawl_course_info
 
 platforms.C_FORCE_ROOT = True
 celery = Celery('tasks')
@@ -15,6 +15,9 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, name='task_crawl_accept_problem',
                              sig=task_f,
                              args=[task_crawl_accept_problem])
+    sender.add_periodic_task(3600, name='task_crawl_course_info',
+                             sig=task_f,
+                             args=[task_crawl_course_info])
     sender.add_periodic_task(3600 * 4, name='task_calculate_user_rating',
                              sig=task_f,
                              args=[task_calculate_user_rating])

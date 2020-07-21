@@ -7,6 +7,11 @@ from app.models.oj import OJ
 from app.models.oj_username import OJUsername
 from app.models.problem import Problem
 from app.models.user import User
+from app.models.camp_models.course import Course
+from app.models.camp_models.course_oj_username import CourseOJUsername
+from app.models.camp_models.camp_problem import CampProblem
+from app.models.camp_models.camp_accept_problem import CampAcceptProblem
+from app.models.camp_models.user_contest import UserContest
 from app.spiders.base_spider import BaseSpider
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
@@ -20,6 +25,7 @@ from app.spiders.pintia_spider import PintiaSpider
 from app.spiders.poj_spider import PojSpider
 from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zucc_spider import ZuccSpider
+from app.spiders.camp_spiders.nowcoder_camp_spider import NowcoderCampSpider
 
 
 def task_crawl_accept_problem(username=None, oj_id=None):
@@ -105,3 +111,78 @@ def crawl_problem_rating(problem_id):
         rating = DEFAULT_PROBLEM_RATING
 
     problem.modify(rating=rating)
+
+
+def task_crawl_course_info(course_id=None):
+    from tasks import task_f
+    if course_id is None:
+        course_list = Course.search(page_size=-1)['data']
+    else:
+        course_list = [Course.get_by_id(course_id)]
+    for course in course_list:
+        task_f.delay(crawl_course_info, course_id=course.id)
+
+
+def crawl_course_info(course_id):
+    users = User.search(status=1, page_size=-1)['data']
+    course = Course.get_by_id(course_id)
+    spider_info = None
+    if course.spider_username or course.spider_password:
+        spider_info = {
+            'username': course.spider_username,
+            'password': course.spider_password
+        }
+    spider = globals()[course.camp_oj.name.title() + 'CampSpider'](spider_info)
+    for contest in course.contests:
+        res = spider.get_contest_meta(contest.contest_cid)
+        if not res['success']:
+            continue
+        meta_info = res['data']
+        max_pass = meta_info['max_pass']
+        participants = meta_info['participants']
+        contest.modify(
+            max_pass=max_pass,
+            participants=participants
+        )
+        for problem in meta_info['problems']:
+            CampProblem.get_by_contest_id_and_problem_pid(contest.id, problem)
+        for user in users:
+            oj_username = CourseOJUsername.get_by_username_and_course_id(
+                user.username,
+                course_id
+            )
+            if oj_username is None:
+                continue
+            res = spider.get_user_info(contest.contest_cid, oj_username)
+            if not res['success']:
+                continue
+            oj_username.modify(last_success_time=datetime.datetime.now())
+            user_info = res['data']
+            for problem_pid in user_info['pass_list']:
+                problem = CampProblem.get_by_contest_id_and_problem_pid(
+                    contest.id,
+                    problem_pid
+                )
+                acp = CampAcceptProblem.get_by_username_and_problem_id(
+                    user.username,
+                    problem.id
+                )
+                if acp is None:
+                    CampAcceptProblem.create(
+                        username=user.username,
+                        contest_id=contest.id,
+                        problem_id=problem.id
+                    )
+            ac_cnt = len(user_info['pass_list'])
+            rank = user_info['rank']
+            rating = 200 * ((participants - rank + 1) / participants) * (ac_cnt / max_pass)
+            rating = round(rating, 3)
+            user_contest = UserContest.get_by_username_and_contest_id(
+                user.username,
+                contest.id
+            )
+            user_contest.modify(
+                ac_cnt=len(user_info['pass_list']),
+                rank=user_info['rank'],
+                rating=rating
+            )
