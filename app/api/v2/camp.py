@@ -182,6 +182,7 @@ def get_course_username_api(id_):
         if data is None:
             data = [{
                 'username': current_user.username,
+                'nickname': current_user.nickname,
                 'oj': oj,
                 'oj_username': None,
                 'last_success_time': None
@@ -202,6 +203,7 @@ def get_course_username_api(id_):
                 last_success_time = res.last_success_time
             data.append({
                 'username': user.username,
+                'nickname': user.nickname,
                 'oj': oj,
                 'oj_username': oj_username,
                 'last_success_time': last_success_time
