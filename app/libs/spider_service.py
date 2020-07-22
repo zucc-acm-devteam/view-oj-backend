@@ -120,7 +120,8 @@ def task_crawl_course_info(course_id=None):
     else:
         course_list = [Course.get_by_id(course_id)]
     for course in course_list:
-        task_f.delay(crawl_course_info, course_id=course.id)
+        if course.camp_oj.status == 1:
+            task_f.delay(crawl_course_info, course_id=course.id)
 
 
 def crawl_course_info(course_id):
