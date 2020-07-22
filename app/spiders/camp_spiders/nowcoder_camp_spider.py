@@ -6,35 +6,26 @@ from app.libs.spider_http import SpiderHttp
 class NowcoderCampSpider(BaseCampSpider):
     def get_user_info(self, contest_cid, course_oj_username):
         oj_username = course_oj_username.oj_username
-        pass_list = set()
+        pass_list = []
         rank = 0
-        page = 1
-        page_size = 1
         http = SpiderHttp()
-        while page <= page_size:
-            url = 'https://ac.nowcoder.com/acm-heavy/acm/contest/status-list' \
-                  '?id={}&pageSize=20&statusTypeFilter=5&searchUserName' \
-                  '={}&page={}'.format(contest_cid,
-                                       quote(oj_username),
-                                       page)
-            res = http.get(url=url).json()
-            if res['msg'] != 'OK':
-                return {'success': False, 'data': None}
-            for item in res['data']['data']:
-                if item['userName'] == oj_username:
-                    pass_list.add(item['index'])
-            pass_list = list(pass_list)
-            page_size = res['data']['basicInfo']['pageCount']
-            page += 1
         url = 'https://ac.nowcoder.com/acm-heavy/acm/contest/' \
               'real-time-rank-data?id={}&' \
               'searchUserName={}'.format(contest_cid, quote(oj_username))
         res = http.get(url=url).json()
         if res['msg'] != 'OK':
             return {'success': False, 'data': None}
+        problem_dict = {}
+        for problem_info in res['data']['problemData']:
+            problem_dict[problem_info['problemId']] = problem_info['name']
         for item in res['data']['rankData']:
-            if item['userName'] == oj_username:
-                rank = item['ranking']
+            if item['userName'] != oj_username:
+                continue
+            rank = item['ranking']
+            for problem_info in item['scoreList']:
+                if not problem_info['accepted']:
+                    continue
+                pass_list.append(problem_info['problemId'])
         if rank == 0:
             return {'success': False, 'data': None}
         result = {
