@@ -25,7 +25,7 @@ class NowcoderCampSpider(BaseCampSpider):
             for problem_info in item['scoreList']:
                 if not problem_info['accepted']:
                     continue
-                pass_list.append(problem_info['problemId'])
+                pass_list.append(problem_dict[problem_info['problemId']])
         if rank == 0:
             return {'success': False, 'data': None}
         result = {
