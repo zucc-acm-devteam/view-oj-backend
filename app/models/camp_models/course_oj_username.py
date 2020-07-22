@@ -39,6 +39,7 @@ class CourseOJUsername(Base):
             )
             if user_contest:
                 res += user_contest.rating
+        res = round(res, 3)
         return res
 
     @classmethod
