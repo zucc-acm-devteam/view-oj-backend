@@ -65,7 +65,7 @@ def get_camp_rating(id_):
                 'username': user.username,
                 'nickname': user.nickname,
                 'status': user.status,
-                'rating': rating
+                'rating': round(rating, 3)
             })
     return jsonify({
         'code': 0,
