@@ -45,6 +45,8 @@ def get_task_summary_api():
     res = db.session.execute("select count(*) from kombu_message where visible = 1 and queue_id = 2")
     res = res.fetchone()[0]
     task2 = res
+    db.session.execute("delete from kombu_message where visible = 0")
+    db.session.commit()
     return jsonify({
         'code': 0,
         'data': {
