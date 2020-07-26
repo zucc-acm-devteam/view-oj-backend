@@ -81,7 +81,7 @@ class HduCampSpider(BaseCampSpider):
         for item in res:
             splited = item.split(',')
             ranklist.append({
-                'passed': splited[3],
+                'passed': int(splited[3]),
                 'name': splited[2][1:-1]
             })
         self.ranklist = ranklist
