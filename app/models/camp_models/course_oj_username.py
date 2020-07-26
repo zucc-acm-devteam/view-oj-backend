@@ -55,10 +55,12 @@ class CourseOJUsername(Base):
         from app.models.camp_models.camp_accept_problem import CampAcceptProblem
         contests = self.course.contests
         for contest in contests:
-            UserContest.get_by_username_and_contest_id(
+            user_contest = UserContest.get_by_username_and_contest_id(
                 self.username,
                 contest.id
-            ).delete()
+            )
+            if user_contest:
+                user_contest.delete()
             accept_problems = CampAcceptProblem.search(
                 username=self.username,
                 contest_id=contest.id

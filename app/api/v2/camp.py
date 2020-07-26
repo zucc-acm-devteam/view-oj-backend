@@ -255,6 +255,8 @@ def get_contest_detail_api(id_):
             user.username,
             id_
         )
+        if user_contest is None:
+            continue
         res.append({
             'user': user,
             'accepted_problems': user_contest.accepted_problems,

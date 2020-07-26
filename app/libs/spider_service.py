@@ -183,6 +183,11 @@ def crawl_course_info(course_id):
                 user.username,
                 contest.id
             )
+            if user_contest is None:
+                user_contest = UserContest.create(
+                    username=user.username,
+                    contest_id=contest.id
+                )
             user_contest.modify(
                 ac_cnt=len(user_info['pass_list']),
                 rank=user_info['rank'],

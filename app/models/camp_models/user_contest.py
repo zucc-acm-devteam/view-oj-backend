@@ -34,4 +34,4 @@ class UserContest(Base):
         r = cls.search(username=username, contest_id=contest_id)['data']
         if r:
             return r[0]
-        return cls.create(username=username, contest_id=contest_id)
+        return None
