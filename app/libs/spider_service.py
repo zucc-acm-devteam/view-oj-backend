@@ -26,6 +26,7 @@ from app.spiders.poj_spider import PojSpider
 from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zucc_spider import ZuccSpider
 from app.spiders.camp_spiders.nowcoder_camp_spider import NowcoderCampSpider
+from app.spiders.camp_spiders.hdu_camp_spider import HduCampSpider
 
 
 def task_crawl_accept_problem(username=None, oj_id=None):
