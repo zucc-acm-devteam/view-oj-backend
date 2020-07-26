@@ -32,13 +32,12 @@ class CourseOJUsername(Base):
         from app.models.camp_models.user_contest import UserContest
         contests = Course.get_by_id(self.course_id).contests
         res = 0
-        for contest in contests:
-            user_contest = UserContest.get_by_username_and_contest_id(
-                username=self.username,
-                contest_id=contest.id
-            )
-            if user_contest:
-                res += user_contest.rating
+        user_contests = UserContest.query.filter(
+            UserContest.username == self.username,
+            UserContest.contest_id.in_([i.id for i in contests])
+        ).all()
+        for user_contest in user_contests:
+            res += user_contest.rating
         res = round(res, 3)
         return res
 

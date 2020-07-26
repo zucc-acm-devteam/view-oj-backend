@@ -148,14 +148,16 @@ def get_course_rating_api(id_):
     if course is None:
         raise NotFound('Course not found')
     users = User.search(status=1, page_size=-1)['data']
-    res = []
+    username2user = {}
     for user in users:
-        course_oj_username = CourseOJUsername.get_by_username_and_course_id(
-            user.username,
-            id_
-        )
-        if course_oj_username is None:
-            continue
+        username2user[user.username] = user
+    res = []
+    course_oj_usernames = CourseOJUsername.query.filter(
+        CourseOJUsername.course_id == id_,
+        CourseOJUsername.username.in_([i.username for i in users])
+    ).all()
+    for course_oj_username in course_oj_usernames:
+        user = username2user[course_oj_username.username]
         res.append({
             'username': user.username,
             'nickname': user.nickname,
