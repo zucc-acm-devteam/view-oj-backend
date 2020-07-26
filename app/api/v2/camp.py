@@ -47,11 +47,12 @@ def get_camp_rating(id_):
     if camp is None:
         raise NotFound('Camp not found')
     users = User.search(status=1, page_size=-1)['data']
+    courses = camp.courses
     res = []
     for user in users:
         rating = 0
         found = False
-        for course in camp.courses:
+        for course in courses:
             course_oj_username = CourseOJUsername.get_by_username_and_course_id(
                 user.username,
                 course.id
