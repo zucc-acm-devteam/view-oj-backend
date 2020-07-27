@@ -15,6 +15,8 @@ from app.validators.camp import (AppendContestForm, CreateCampForm,
                                  ModifyCourseForm, ModifyCourseUsernameForm)
 from app.libs.spider_service import task_crawl_course_info
 from app.models.user import User
+from sqlalchemy import func
+from app.models.base import db
 
 api = RedPrint('camp')
 
@@ -43,31 +45,23 @@ def summary_api():
 
 @api.route('/<int:id_>/rating', methods=['GET'])
 def get_camp_rating(id_):
+    # todo 提速
     camp = Camp.get_by_id(id_)
     if camp is None:
         raise NotFound('Camp not found')
-    users = User.search(status=1, page_size=-1)['data']
-    courses = camp.courses
     res = []
-    for user in users:
-        rating = 0
-        found = False
-        for course in courses:
-            course_oj_username = CourseOJUsername.get_by_username_and_course_id(
-                user.username,
-                course.id
-            )
-            if course_oj_username is None:
-                continue
-            found = True
-            rating += course_oj_username.rating
-        if found:
-            res.append({
-                'username': user.username,
-                'nickname': user.nickname,
-                'status': user.status,
-                'rating': round(rating, 3)
-            })
+    data = db.session. \
+        query(User.username, User.nickname, func.sum(UserContest.rating)). \
+        filter(User.username == UserContest.username, CourseContest.course_id == Course.id,
+               UserContest.contest_id == CourseContest.id). \
+        filter(User.status == 1, Course.camp_id == id_). \
+        group_by(User.username).all()
+    for item in data:
+        res.append({
+            'username': item[0],
+            'nickname': item[1],
+            'rating': round(item[2], 3)
+        })
     return jsonify({
         'code': 0,
         'data': res
@@ -144,25 +138,21 @@ def append_contest_api(id_):
 
 @api.route('/course/<int:id_>/rating', methods=['GET'])
 def get_course_rating_api(id_):
+    # todo 进一步提速
     course = Course.get_by_id(id_)
     if course is None:
         raise NotFound('Course not found')
-    users = User.search(status=1, page_size=-1)['data']
-    username2user = {}
-    for user in users:
-        username2user[user.username] = user
+    data = db.session. \
+        query(User.username, User.nickname, func.sum(UserContest.rating)). \
+        filter(User.username == UserContest.username, UserContest.contest_id == CourseContest.id). \
+        filter(User.status == 1, CourseContest.course_id == id_). \
+        group_by(User.username).all()
     res = []
-    course_oj_usernames = CourseOJUsername.query.filter(
-        CourseOJUsername.course_id == id_,
-        CourseOJUsername.username.in_([i.username for i in users])
-    ).all()
-    for course_oj_username in course_oj_usernames:
-        user = username2user[course_oj_username.username]
+    for item in data:
         res.append({
-            'username': user.username,
-            'nickname': user.nickname,
-            'status': user.status,
-            'rating': course_oj_username.rating
+            'username': item[0],
+            'nickname': item[1],
+            'rating': round(item[2], 3)
         })
     return jsonify({
         'code': 0,
