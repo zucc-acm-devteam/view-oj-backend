@@ -28,8 +28,7 @@ class ModifyCourseForm(BaseForm):
 
 class AppendContestForm(BaseForm):
     name = StringField(validators=[DataRequired(message='name required')])
-    camp_oj = StringField(validators=[DataRequired(message='oj required')])
-    contest_id = StringField(validators=[DataRequired(message='contest id required')])
+    contest_cid = StringField(validators=[DataRequired(message='contest cid required')])
 
 
 class ModifyCourseUsernameForm(BaseForm):
