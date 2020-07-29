@@ -5,7 +5,9 @@ from app.libs.auth import admin_only
 from app.libs.error_code import CreateSuccess, NotFound, Success, AuthFailed
 from app.libs.red_print import RedPrint
 from app.models.camp_models.camp import Camp
+from app.models.camp_models.camp_accept_problem import CampAcceptProblem
 from app.models.camp_models.camp_oj import CampOJ
+from app.models.camp_models.camp_problem import CampProblem
 from app.models.camp_models.course import Course
 from app.models.camp_models.course_oj_username import CourseOJUsername
 from app.models.camp_models.course_contest import CourseContest
@@ -45,7 +47,6 @@ def summary_api():
 
 @api.route('/<int:id_>/rating', methods=['GET'])
 def get_camp_rating(id_):
-    # todo 提速
     camp = Camp.get_by_id(id_)
     if camp is None:
         raise NotFound('Camp not found')
@@ -138,21 +139,41 @@ def append_contest_api(id_):
 
 @api.route('/course/<int:id_>/rating', methods=['GET'])
 def get_course_rating_api(id_):
-    # todo 进一步提速
     course = Course.get_by_id(id_)
     if course is None:
         raise NotFound('Course not found')
     data = db.session. \
-        query(User.username, User.nickname, func.sum(UserContest.rating)). \
-        filter(User.username == UserContest.username, UserContest.contest_id == CourseContest.id). \
-        filter(User.status == 1, CourseContest.course_id == id_). \
-        group_by(User.username).all()
-    res = []
+        query(CourseOJUsername.oj_username, func.sum(UserContest.rating)). \
+        filter(CourseOJUsername.course_id == id_, CourseOJUsername.username == UserContest.username). \
+        filter(CourseContest.course_id == id_, UserContest.contest_id == CourseContest.id). \
+        group_by(CourseOJUsername.oj_username).all()
+    temp = {}
     for item in data:
+        temp.setdefault(item[0], {
+            'rating': item[1],
+            'members': []
+        })
+    data = db.session.query(CourseOJUsername.oj_username, CourseOJUsername.username, User.nickname). \
+        filter(CourseOJUsername.username == User.username). \
+        filter(CourseOJUsername.course_id == id_).all()
+    for item in data:
+        temp.setdefault(item[0], {
+            'rating': 0,
+            'members': []
+        })
+        temp[item[0]]['members'].append({
+            'username': item[1],
+            'nickname': item[2]
+        })
+    for item in temp.keys():
+        rating = temp[item]['rating'] / len(temp[item]['members'])
+        temp[item]['rating'] = round(rating, 3)
+    res = []
+    for name, info in temp.items():
         res.append({
-            'username': item[0],
-            'nickname': item[1],
-            'rating': round(item[2], 3)
+            'team_name': name if len(info['members']) > 1 else info['members'][0]['nickname'],
+            'members': info['members'],
+            'rating': info['rating']
         })
     return jsonify({
         'code': 0,
@@ -240,19 +261,55 @@ def get_contest_detail_api(id_):
     contest = CourseContest.get_by_id(id_)
     if contest is None:
         raise NotFound('Contest not found')
-    users = User.search(status=1, page_size=-1)['data']
+    data = db.session. \
+        query(CourseOJUsername.oj_username, CampAcceptProblem). \
+        filter(CourseOJUsername.course_id == contest.course_id). \
+        filter(CampAcceptProblem.contest_id == id_). \
+        filter(CampAcceptProblem.username == CourseOJUsername.username).all()
+    temp = {}
+    data = list(set(data))
+    for item in data:
+        temp.setdefault(item[0], {
+            'rating': 0,
+            'accepted_problems': [],
+            'members': []
+        })
+        temp[item[0]]['accepted_problems'].append(item[1])
+    data = db.session. \
+        query(CourseOJUsername.oj_username, func.sum(UserContest.rating)). \
+        filter(CourseOJUsername.course_id == contest.course_id, CourseOJUsername.username == UserContest.username). \
+        filter(UserContest.contest_id == id_). \
+        group_by(CourseOJUsername.oj_username).all()
+    for item in data:
+        temp.setdefault(item[0], {
+            'rating': 0,
+            'accepted_problems': [],
+            'members': []
+        })
+        temp[item[0]]['rating'] = item[1]
+    data = db.session.query(CourseOJUsername.oj_username, CourseOJUsername.username, User.nickname). \
+        filter(CourseOJUsername.username == User.username). \
+        filter(CourseOJUsername.course_id == contest.course_id).all()
+    for item in data:
+        temp.setdefault(item[0], {
+            'rating': 0,
+            'accepted_problems': [],
+            'members': []
+        })
+        temp[item[0]]['members'].append({
+            'username': item[1],
+            'nickname': item[2]
+        })
+    for item in temp.keys():
+        rating = temp[item]['rating'] / len(temp[item]['members'])
+        temp[item]['rating'] = round(rating, 3)
     res = []
-    for user in users:
-        user_contest = UserContest.get_by_username_and_contest_id(
-            user.username,
-            id_
-        )
-        if user_contest is None:
-            continue
+    for name, info in temp.items():
         res.append({
-            'user': user,
-            'accepted_problems': user_contest.accepted_problems,
-            'rating': user_contest.rating
+            'team_name': name if len(info['members']) > 1 else info['members'][0]['nickname'],
+            'accepted_problems': info['accepted_problems'],
+            'members': info['members'],
+            'rating': info['rating']
         })
     return jsonify({
         'code': 0,
