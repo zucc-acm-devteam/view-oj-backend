@@ -26,11 +26,12 @@ class HduCampSpider(BaseCampSpider):
         trs = soup.find('table').find_all('tr')
         if len(trs) > 2:
             trs = trs[2:]
-        for tr in trs:
-            link = tr.find_all('a')[0]
-            problem = link.text
-            problem = chr(int(problem) - 1001 + ord('A'))
-            pass_list.append(problem)
+            for tr in trs:
+                link = tr.find_all('a')[0]
+                problem = link.text
+                problem = chr(int(problem) - 1001 + ord('A'))
+                pass_list.append(problem)
+        pass_list = list(set(pass_list))
         rank = 0
         self._get_contest_ranklist()
         for i, item in enumerate(self.ranklist, 1):
