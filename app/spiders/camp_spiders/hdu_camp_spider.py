@@ -1,11 +1,19 @@
 from app.spiders.camp_spiders.base_camp_spider import BaseCampSpider
 from app.libs.spider_http import SpiderHttp
 from bs4 import BeautifulSoup
-import re
+import re, time
+
+
+class HduHttp(SpiderHttp):
+    @staticmethod
+    def _before_request(url: str, params: dict, data: dict) -> (str, str):
+        if 'userloginex.php' in url:
+            time.sleep(10)
+        return url, data
 
 
 class HduCampSpider(BaseCampSpider):
-    http = SpiderHttp()
+    http = HduHttp()
     ranklist = []
     current_contest_cid = None
 
@@ -58,6 +66,12 @@ class HduCampSpider(BaseCampSpider):
         })
         if 'Sign In Your Account' in res.text:
             raise Exception('Login failed')
+        url = 'http://acm.hdu.edu.cn/contests/' \
+              'client_ranklist.php?cid={}'.format(self.current_contest_cid)
+        res = self.http.get(url=url)
+        res.encoding = 'gb2312'
+        if 'c=' + self.current_contest_cid not in res.text:
+            raise Exception('hdu bug')
 
     def _check_login(self, contest_cid):
         url = 'http://acm.hdu.edu.cn/contests/contest_show.php?cid={}'.format(contest_cid)
@@ -68,13 +82,12 @@ class HduCampSpider(BaseCampSpider):
         # need to check login first
         if self.ranklist:
             return
-        url = 'http://acm.hdu.edu.cn/contests/contest_show.php?' \
-              'cid={}'.format(self.current_contest_cid)
-        self.http.get(url=url)
         url = 'http://acm.hdu.edu.cn/contests/' \
               'client_ranklist.php?cid={}'.format(self.current_contest_cid)
         res = self.http.get(url=url)
         res.encoding = 'gb2312'
+        if 'c=' + self.current_contest_cid not in res.text:
+            raise Exception('hdu bug')
         res = re.findall(r'pr\((.*)\)', res.text)[1:]
         ranklist = []
         for item in res:
