@@ -52,16 +52,16 @@ def get_camp_rating(id_):
         raise NotFound('Camp not found')
     res = []
     data = db.session. \
-        query(User.username, User.nickname, func.sum(UserContest.rating)). \
+        query(User, func.sum(UserContest.rating)). \
         filter(User.username == UserContest.username, CourseContest.course_id == Course.id,
                UserContest.contest_id == CourseContest.id). \
         filter(User.status == 1, Course.camp_id == id_). \
         group_by(User.username).all()
     for item in data:
+        user = item[0]
         res.append({
-            'username': item[0],
-            'nickname': item[1],
-            'rating': round(item[2], 3)
+            'user': user,
+            'rating': round(item[1], 3)
         })
     return jsonify({
         'code': 0,

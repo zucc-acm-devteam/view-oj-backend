@@ -20,8 +20,8 @@ class User(UserMixin, Base):
     rating = Column(Integer, nullable=False, default=0)
     codeforces_rating = Column(Integer, nullable=False, default=0)
     contest_num = Column(Integer, nullable=False, default=0)
-    name_color = Column(String(100))
-    name_back_color = Column(String(100))
+    name_color_ = Column('name_color', String(100))
+    name_back_color_ = Column('name_back_color', String(100))
 
     @property
     def id(self):
@@ -75,6 +75,18 @@ class User(UserMixin, Base):
             db.session.query(cast(AcceptProblem.create_time, Date), func.sum(AcceptProblem.add_rating)).filter(
                 AcceptProblem.username == self.username
             ).group_by(cast(AcceptProblem.create_time, Date)).order_by(cast(AcceptProblem.create_time, Date)).all()]
+
+    @property
+    def name_color(self):
+        if self.name_color_ is None:
+            return None
+        return self.name_color_.split(',')
+
+    @property
+    def name_back_color(self):
+        if self. name_back_color_ is None:
+            return None
+        return self.name_back_color_.split(',')
 
     def check_password(self, password):
         return self.password == password
