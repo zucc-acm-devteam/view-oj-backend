@@ -20,6 +20,8 @@ class User(UserMixin, Base):
     rating = Column(Integer, nullable=False, default=0)
     codeforces_rating = Column(Integer, nullable=False, default=0)
     contest_num = Column(Integer, nullable=False, default=0)
+    name_color = Column(String(100))
+    name_back_color = Column(String(100))
 
     @property
     def id(self):
