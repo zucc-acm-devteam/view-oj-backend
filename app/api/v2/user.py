@@ -71,7 +71,7 @@ def search_user_api():
 def get_user_rating_api():
     res = User.search(page_size=-1)['data']
     fields = User.fields.copy()
-    fields.extend(['rating', 'codeforces_rating', 'contest_num', 'name_color', 'name_back_color'])
+    fields.extend(['rating', 'codeforces_rating', 'contest_num'])
     for i in res:
         i.fields = fields
     return jsonify({

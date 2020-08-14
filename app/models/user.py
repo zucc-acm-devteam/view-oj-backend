@@ -9,7 +9,7 @@ from app.models.base import Base, db
 class User(UserMixin, Base):
     __tablename__ = 'user'
 
-    fields = ['username', 'nickname', 'group', 'permission', 'status']
+    fields = ['username', 'nickname', 'group', 'permission', 'status', 'name_color', 'name_back_color']
 
     username = Column(String(100), primary_key=True)
     nickname = Column(String(100), nullable=False)
