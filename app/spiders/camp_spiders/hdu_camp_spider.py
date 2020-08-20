@@ -74,6 +74,7 @@ class HduCampSpider(BaseCampSpider):
             raise Exception('hdu bug')
 
     def _check_login(self, contest_cid):
+        self.current_contest_cid = contest_cid
         url = 'http://acm.hdu.edu.cn/contests/contest_show.php?cid={}'.format(contest_cid)
         res = self.http.get(url=url)
         return 'Sign In Your Account' not in res.text
