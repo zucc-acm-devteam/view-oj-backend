@@ -24,6 +24,8 @@ class NowcoderSpider(BaseSpider):
             res = SpiderHttp().get(url=url)
             if res.status_code != 200:
                 break
+            if '<title>页面找不到了</title>' in res.text:
+                break
             if '用户不存在' in res.text:
                 break
             if '没有找到你想要的内容呢' in res.text:
