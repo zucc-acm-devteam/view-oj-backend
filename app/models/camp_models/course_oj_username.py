@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 
 from app.models.base import Base
 from app.models.camp_models.camp_oj import CampOJ

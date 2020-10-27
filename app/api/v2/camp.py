@@ -1,24 +1,24 @@
 from flask import jsonify
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
+from sqlalchemy import func
 
 from app.libs.auth import admin_only
-from app.libs.error_code import CreateSuccess, NotFound, Success, AuthFailed
+from app.libs.error_code import AuthFailed, CreateSuccess, NotFound, Success
 from app.libs.red_print import RedPrint
+from app.libs.spider_service import task_crawl_course_info
+from app.models.base import db
 from app.models.camp_models.camp import Camp
 from app.models.camp_models.camp_accept_problem import CampAcceptProblem
 from app.models.camp_models.camp_oj import CampOJ
 from app.models.camp_models.camp_problem import CampProblem
 from app.models.camp_models.course import Course
-from app.models.camp_models.course_oj_username import CourseOJUsername
 from app.models.camp_models.course_contest import CourseContest
+from app.models.camp_models.course_oj_username import CourseOJUsername
 from app.models.camp_models.user_contest import UserContest
+from app.models.user import User
 from app.validators.camp import (AppendContestForm, CreateCampForm,
                                  CreateCourseForm, ModifyCampNameForm,
                                  ModifyCourseForm, ModifyCourseUsernameForm)
-from app.libs.spider_service import task_crawl_course_info
-from app.models.user import User
-from sqlalchemy import func
-from app.models.base import db
 
 api = RedPrint('camp')
 
@@ -113,7 +113,7 @@ def create_course(id_):
     raise Success('Course has been created')
 
 
-@api.route('/course/<int:id_>', methods=['PATCH'])
+@api.route('/course/<int:id_>', methods=['PUT'])
 @login_required
 @admin_only
 def modify_course_api(id_):

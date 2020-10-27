@@ -54,7 +54,7 @@ def create_problem_set_api():
     raise CreateSuccess('Problem set has been created')
 
 
-@api.route("/<int:id_>", methods=['PATCH'])
+@api.route("/<int:id_>", methods=['PUT'])
 @login_required
 @admin_only
 def modify_problem_set_api(id_):

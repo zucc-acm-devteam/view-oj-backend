@@ -1,6 +1,7 @@
 from urllib.parse import quote
-from app.spiders.camp_spiders.base_camp_spider import BaseCampSpider
+
 from app.libs.spider_http import SpiderHttp
+from app.spiders.camp_spiders.base_camp_spider import BaseCampSpider
 
 
 class NowcoderCampSpider(BaseCampSpider):
