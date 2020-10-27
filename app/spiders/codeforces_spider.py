@@ -1,5 +1,6 @@
 import json
 import re
+import time
 
 from bs4 import BeautifulSoup
 
@@ -9,16 +10,17 @@ from app.libs.spider_http import SpiderHttp
 from app.models.mapping import Mapping
 from app.models.user import User
 from app.spiders.base_spider import BaseSpider
+from app.models.codeforces_rounds import CodeforcesRounds
+from app.libs.helper import str_to_datetime
 
 
 class CodeforcesSpider(BaseSpider):
     def get_user_info(self, oj_username, accept_problems):
+        # try:
+        self.crawl_user_rounds_info(oj_username)
+        # except:
+        #     return {'success': False, 'data': []}
         username = oj_username.oj_username
-        rating = self.get_rating(username)
-        contest_num = self.get_contest_num(username)
-        user = User.get_by_id(oj_username.username)
-        user.modify(codeforces_rating=rating, contest_num=contest_num)
-
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)
         res = SpiderHttp().get(url=url)
@@ -87,13 +89,17 @@ class CodeforcesSpider(BaseSpider):
         return star_rating[stars]
 
     @staticmethod
-    def get_rating(username):
-        url = 'http://codeforces.com/api/user.info?handles={}'.format(username)
-        res = SpiderHttp().get(url=url).json()
-        return res['result'][0]['rating']
-
-    @staticmethod
-    def get_contest_num(username):
-        url = 'http://codeforces.com/api/user.rating?handle={}'.format(username)
-        res = SpiderHttp().get(url=url).json()
-        return len(res['result'])
+    def crawl_user_rounds_info(oj_username):
+        url = 'http://codeforces.com/api/user.info?handles={}'.format(oj_username.oj_username)
+        rating = SpiderHttp().get(url=url).json()['result'][0]['rating']
+        url = 'http://codeforces.com/api/user.rating?handle={}'.format(oj_username.oj_username)
+        res = SpiderHttp().get(url=url).json()['result']
+        contest_num = len(res)
+        user = User.get_by_id(oj_username.username)
+        user.modify(codeforces_rating=rating, contest_num=contest_num)
+        for round in res:
+            t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(round['ratingUpdateTimeSeconds']))
+            cf_round = CodeforcesRounds.get_by_username_and_round_name(oj_username.username, round['contestName'])
+            cf_round.modify(rank=round['rank'],
+                            rating_change=round['newRating'] - round['oldRating'],
+                            create_time=str_to_datetime(t))
