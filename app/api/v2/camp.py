@@ -113,7 +113,7 @@ def create_course(id_):
     raise Success('Course has been created')
 
 
-@api.route('/course/<int:id_>', methods=['PATCH'])
+@api.route('/course/<int:id_>', methods=['PUT'])
 @login_required
 @admin_only
 def modify_course_api(id_):

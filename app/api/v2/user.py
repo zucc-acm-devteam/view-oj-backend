@@ -37,7 +37,7 @@ def create_user_api():
     raise CreateSuccess('User has been created')
 
 
-@api.route("/<string:id_>", methods=['PATCH'])
+@api.route("/<string:id_>", methods=['PUT'])
 @login_required
 def modify_user_api(id_):
     user = User.get_by_id(id_)
