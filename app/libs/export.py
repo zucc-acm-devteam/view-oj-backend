@@ -1,10 +1,11 @@
-from xlwt.Worksheet import Worksheet
-from app.models.base import db
 from sqlalchemy import asc, desc
-from app.models.user import User
-from app.models.camp_models.user_contest import UserContest
+from xlwt.Worksheet import Worksheet
+
+from app.models.base import db
 from app.models.camp_models.course_contest import CourseContest
 from app.models.camp_models.course_oj_username import CourseOJUsername
+from app.models.camp_models.user_contest import UserContest
+from app.models.user import User
 
 
 def query_course_rating(course_id):

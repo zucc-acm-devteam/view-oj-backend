@@ -3,10 +3,10 @@ import json
 from wtforms import StringField
 from wtforms.validators import DataRequired, ValidationError
 
+from app.models.camp_models.course import Course
 from app.models.oj import OJ
 from app.models.problem import Problem
 from app.models.user import User
-from app.models.camp_models.course import Course
 from app.validators.base import BaseForm
 
 

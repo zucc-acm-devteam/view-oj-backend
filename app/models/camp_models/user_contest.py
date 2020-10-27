@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
 from app.models.base import Base
-from app.models.camp_models.course_contest import CourseContest
 from app.models.camp_models.camp_accept_problem import CampAcceptProblem
+from app.models.camp_models.course_contest import CourseContest
 from app.models.user import User
 
 

@@ -5,13 +5,12 @@ import time
 from bs4 import BeautifulSoup
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.libs.helper import timestamp_to_str
+from app.libs.helper import str_to_datetime, timestamp_to_str
 from app.libs.spider_http import SpiderHttp
+from app.models.codeforces_rounds import CodeforcesRounds
 from app.models.mapping import Mapping
 from app.models.user import User
 from app.spiders.base_spider import BaseSpider
-from app.models.codeforces_rounds import CodeforcesRounds
-from app.libs.helper import str_to_datetime
 
 
 class CodeforcesSpider(BaseSpider):

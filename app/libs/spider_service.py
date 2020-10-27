@@ -3,16 +3,18 @@ import datetime
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.helper import str_to_datetime
 from app.models.accept_problem import AcceptProblem
+from app.models.camp_models.camp_accept_problem import CampAcceptProblem
+from app.models.camp_models.camp_problem import CampProblem
+from app.models.camp_models.course import Course
+from app.models.camp_models.course_oj_username import CourseOJUsername
+from app.models.camp_models.user_contest import UserContest
 from app.models.oj import OJ
 from app.models.oj_username import OJUsername
 from app.models.problem import Problem
 from app.models.user import User
-from app.models.camp_models.course import Course
-from app.models.camp_models.course_oj_username import CourseOJUsername
-from app.models.camp_models.camp_problem import CampProblem
-from app.models.camp_models.camp_accept_problem import CampAcceptProblem
-from app.models.camp_models.user_contest import UserContest
 from app.spiders.base_spider import BaseSpider
+from app.spiders.camp_spiders.hdu_camp_spider import HduCampSpider
+from app.spiders.camp_spiders.nowcoder_camp_spider import NowcoderCampSpider
 # 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
@@ -25,8 +27,6 @@ from app.spiders.pintia_spider import PintiaSpider
 from app.spiders.poj_spider import PojSpider
 from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zucc_spider import ZuccSpider
-from app.spiders.camp_spiders.nowcoder_camp_spider import NowcoderCampSpider
-from app.spiders.camp_spiders.hdu_camp_spider import HduCampSpider
 
 
 def task_crawl_accept_problem(username=None, oj_id=None):

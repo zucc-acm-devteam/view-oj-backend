@@ -1,7 +1,10 @@
-from app.spiders.camp_spiders.base_camp_spider import BaseCampSpider
-from app.libs.spider_http import SpiderHttp
+import re
+import time
+
 from bs4 import BeautifulSoup
-import re, time
+
+from app.libs.spider_http import SpiderHttp
+from app.spiders.camp_spiders.base_camp_spider import BaseCampSpider
 
 
 class HduHttp(SpiderHttp):

@@ -1,7 +1,8 @@
+import datetime
+
 from sqlalchemy import (Column, Date, DateTime, ForeignKey, Integer, String,
                         cast, func)
 
-import datetime
 from app.models.base import Base, db
 from app.models.user import User
 

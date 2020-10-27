@@ -2,7 +2,8 @@ from celery import Celery, platforms
 
 from app.config.secure import BROKER_URL
 from app.libs.service import task_calculate_user_rating
-from app.libs.spider_service import task_crawl_accept_problem, task_crawl_course_info
+from app.libs.spider_service import (task_crawl_accept_problem,
+                                     task_crawl_course_info)
 
 platforms.C_FORCE_ROOT = True
 celery = Celery('tasks')
