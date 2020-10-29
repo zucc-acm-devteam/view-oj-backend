@@ -74,7 +74,7 @@ class LuoguSpider(BaseSpider):
                     if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
                         finished = True
                         continue
-                    if real_oj != 'luogu-team':
+                    if real_oj != 'luogu-user':
                         accept_problem_list.append({
                             'oj': real_oj,
                             'problem_pid': problem_pid,
@@ -135,6 +135,9 @@ class LuoguSpider(BaseSpider):
         elif problem_pid.startswith("UVA"):
             real_oj_name = 'uva'
             problem_pid = problem_pid[3:]
+        elif problem_pid[0] == 'U':
+            real_oj_name = 'luogu-user'
+            problem_pid = problem_pid[1:]
         else:
             raise Exception('problem can not resolve')
         return real_oj_name, problem_pid
@@ -199,3 +202,15 @@ class LuoguSpider(BaseSpider):
         url = 'https://www.luogu.com.cn/auth/login'
         res = self.luogu_http.get(url=url)
         return re.search(r'<meta name="csrf-token" content="(.*?)">', res.text).group(1)
+
+
+if __name__ == '__main__':
+    from flask_app import app
+
+    app.app_context().push()
+    from app.models.oj_username import OJUsername
+
+    oj_username = OJUsername()
+    oj_username.oj_username = 'sumingzeng'
+    res = LuoguSpider().get_user_info(oj_username, {})
+    print(res)
