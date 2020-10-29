@@ -27,8 +27,4 @@ def framework_error(e):
 
 
 if __name__ == '__main__':
-    from app.libs.global_varible import g
-    from datetime import datetime
-
-    g.run_start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     app.run(host="0.0.0.0", port=5000, debug=True)
