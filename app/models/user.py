@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, Date, Integer, String, cast, func, Boolean
+from sqlalchemy import Boolean, Column, Date, Integer, String, cast, func
 
 from app import login_manager
 from app.libs.error_code import AuthFailed
