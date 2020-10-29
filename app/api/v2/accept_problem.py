@@ -30,7 +30,6 @@ def search_accept_problem_api():
 def search_accept_problem_summary_api():
     form = SearchAcceptProblemSummaryForm().validate_for_api().data_
     res = []
-    print(form)
     for user, num in AcceptProblem.search_all_users_distribute(
             start_date=form['start_date'],
             end_date=form['end_date'],

@@ -58,7 +58,6 @@ class AcceptProblem(Base):
 
     @staticmethod
     def search_all_users_distribute(start_date, end_date, is_freshman):
-        print(is_freshman)
         accept_problems = AcceptProblem.query \
             .filter(AcceptProblem.create_time >= start_date) \
             .filter(AcceptProblem.create_time < end_date + datetime.timedelta(days=1)).subquery()
