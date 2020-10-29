@@ -34,7 +34,7 @@ def create_app():
     from app.libs.global_varible import g
     from datetime import datetime
 
-    g.run_start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    g.run_start_time = datetime.now().strftime("%a %b %d %Y %H:%M:%S")
 
     flask_app = Flask(__name__)
 
