@@ -132,7 +132,7 @@ class LuoguSpider(BaseSpider):
         elif problem_pid[0] == 'A':
             real_oj_name = 'atcoder'
             problem_pid = problem_pid[2:]
-        elif problem_pid[0] == 'U':
+        elif problem_pid.startswith("UVA"):
             real_oj_name = 'uva'
             problem_pid = problem_pid[3:]
         else:

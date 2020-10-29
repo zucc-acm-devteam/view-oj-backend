@@ -55,3 +55,14 @@ class AcceptProblem(Base):
             })
             start_date += datetime.timedelta(days=1)
         return res
+
+    @staticmethod
+    def search_all_users_distribute(start_date, end_date):
+        accept_problems = AcceptProblem.query \
+            .filter(AcceptProblem.create_time >= start_date) \
+            .filter(AcceptProblem.create_time < end_date + datetime.timedelta(days=1)).subquery()
+        res = db.session.query(User, func.count(accept_problems.c.problem_id)). \
+            filter(User.status == 1). \
+            outerjoin(accept_problems). \
+            group_by(User.username).all()
+        return res

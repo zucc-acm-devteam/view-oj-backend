@@ -28,13 +28,12 @@ def search_accept_problem_api():
 
 @api.route("/summary", methods=['GET'])
 def search_accept_problem_summary_api():
-    from app.models.user import User
     form = SearchAcceptProblemSummaryForm().validate_for_api().data_
     res = []
-    for i in User.search(status=1, page_size=-1)['data']:
+    for user, num in AcceptProblem.search_all_users_distribute(form['start_date'], form['end_date']):
         res.append({
-            'user': i,
-            'num': AcceptProblem.search(username=i.username, **form, page_size=1)['meta']['count']
+            'user': user,
+            'num': num
         })
     return jsonify({
         'code': 0,

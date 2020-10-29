@@ -13,16 +13,22 @@ from app.models.user import User
 from app.spiders.base_spider import BaseSpider
 
 
+class CodeforcesHttp(SpiderHttp):
+    @staticmethod
+    def _end_request(res, encoding: str):
+        time.sleep(0.5)
+        return res
+
+
 class CodeforcesSpider(BaseSpider):
+    codeforces_http = CodeforcesHttp()
+
     def get_user_info(self, oj_username, accept_problems):
-        # try:
         self.crawl_user_rounds_info(oj_username)
-        # except:
-        #     return {'success': False, 'data': []}
         username = oj_username.oj_username
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)
-        res = SpiderHttp().get(url=url)
+        res = self.codeforces_http.get(url=url)
         res = json.loads(res.text)
         if res['status'] != 'OK':
             return {'success': False, 'data': []}
@@ -53,7 +59,7 @@ class CodeforcesSpider(BaseSpider):
         problem_id_2 = p.group(2)
         if int(problem_id_1) < 100000:  # 题目
             url = 'https://codeforces.com/problemset/problem/{}/{}'.format(problem_id_1, problem_id_2)
-            res = SpiderHttp().get(url=url)
+            res = self.codeforces_http.get(url=url)
             try:
                 rating = int(re.search(r'title="Difficulty">\s*\*(\d+)\s*</span>', res.text).group(1))
             except:
@@ -87,12 +93,11 @@ class CodeforcesSpider(BaseSpider):
         mapping.modify(value=str(stars))
         return star_rating[stars]
 
-    @staticmethod
-    def crawl_user_rounds_info(oj_username):
+    def crawl_user_rounds_info(self, oj_username):
         url = 'http://codeforces.com/api/user.info?handles={}'.format(oj_username.oj_username)
-        rating = SpiderHttp().get(url=url).json()['result'][0]['rating']
+        rating = self.codeforces_http.get(url=url).json()['result'][0]['rating']
         url = 'http://codeforces.com/api/user.rating?handle={}'.format(oj_username.oj_username)
-        res = SpiderHttp().get(url=url).json()['result']
+        res = self.codeforces_http.get(url=url).json()['result']
         contest_num = len(res)
         user = User.get_by_id(oj_username.username)
         user.modify(codeforces_rating=rating, contest_num=contest_num)
