@@ -202,15 +202,3 @@ class LuoguSpider(BaseSpider):
         url = 'https://www.luogu.com.cn/auth/login'
         res = self.luogu_http.get(url=url)
         return re.search(r'<meta name="csrf-token" content="(.*?)">', res.text).group(1)
-
-
-if __name__ == '__main__':
-    from flask_app import app
-
-    app.app_context().push()
-    from app.models.oj_username import OJUsername
-
-    oj_username = OJUsername()
-    oj_username.oj_username = 'sumingzeng'
-    res = LuoguSpider().get_user_info(oj_username, {})
-    print(res)
