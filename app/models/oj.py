@@ -13,6 +13,7 @@ class OJ(Base):
     url = Column(String(1000))
     status = Column(Integer, nullable=False)
     need_password = Column(Boolean, nullable=False, default=False)
+    need_single_thread = Column(Boolean, nullable=False, default=False)
 
     @classmethod
     def get_by_name(cls, name):
