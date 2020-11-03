@@ -7,7 +7,8 @@ from app.spiders.base_spider import BaseSpider
 
 
 class VjudgeSpider(BaseSpider):
-    vjudge_http = SpiderHttp()
+    def __init__(self):
+        self.vjudge_http = SpiderHttp()
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
