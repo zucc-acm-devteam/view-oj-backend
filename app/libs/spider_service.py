@@ -43,9 +43,9 @@ def submit_crawl_accept_problem_task(username=None, oj_id=None):
     for user in user_list:
         for oj in oj_id_list:
             if oj.need_single_thread:
-                crawl_accept_problem_task.delay(user.username, oj.id)
-            else:
                 crawl_accept_problem_task_single.delay(user.username, oj.id)
+            else:
+                crawl_accept_problem_task.delay(user.username, oj.id)
 
 
 def crawl_accept_problem(username, oj_id):
