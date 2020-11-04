@@ -29,8 +29,8 @@ class User(UserMixin, Base):
 
     @property
     def oj_username(self):
-        from app.models.oj_username import OJUsername
         from app.models.oj import OJ
+        from app.models.oj_username import OJUsername
         res = OJUsername.search(username=self.username, page_size=-1)['data']
         r = list()
         for i in OJ.search(status=1, page_size=-1)['data']:

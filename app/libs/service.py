@@ -4,14 +4,14 @@ from app.models.accept_problem import AcceptProblem
 from app.models.user import User
 
 
-def task_calculate_user_rating(username=None):
-    from tasks import task_f
+def submit_calculate_user_rating_task(username=None):
+    from tasks import calculate_user_rating_task
     if username:
         user_list = [User.get_by_id(username)]
     else:
         user_list = User.search(status=1, page_size=-1)['data']
     for user in user_list:
-        task_f.delay(calculate_user_rating, username=user.username)
+        calculate_user_rating_task.delay(user.username)
 
 
 def calculate_user_rating(username):

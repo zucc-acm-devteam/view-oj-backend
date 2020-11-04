@@ -31,8 +31,9 @@ def register_plugin(flask_app):
 
 
 def create_app():
-    from app.libs.global_varible import g
     from datetime import datetime
+
+    from app.libs.global_varible import g
 
     g.run_start_time = datetime.now().strftime("%a %b %d %Y %H:%M:%S")
 

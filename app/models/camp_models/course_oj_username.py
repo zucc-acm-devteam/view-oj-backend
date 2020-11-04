@@ -50,8 +50,9 @@ class CourseOJUsername(Base):
             return None
 
     def delete(self):
+        from app.models.camp_models.camp_accept_problem import \
+            CampAcceptProblem
         from app.models.camp_models.user_contest import UserContest
-        from app.models.camp_models.camp_accept_problem import CampAcceptProblem
         contests = self.course.contests
         for contest in contests:
             user_contest = UserContest.get_by_username_and_contest_id(
