@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, Date, Integer, String, cast, func
+from sqlalchemy import Boolean, Column, Date, Integer, String, cast, func
 
 from app import login_manager
 from app.libs.error_code import AuthFailed
@@ -9,7 +9,7 @@ from app.models.base import Base, db
 class User(UserMixin, Base):
     __tablename__ = 'user'
 
-    fields = ['username', 'nickname', 'group', 'permission', 'status', 'custom_color']
+    fields = ['username', 'nickname', 'group', 'permission', 'status', 'is_freshman', 'custom_color']
 
     username = Column(String(100), primary_key=True)
     nickname = Column(String(100), nullable=False)
@@ -21,6 +21,7 @@ class User(UserMixin, Base):
     codeforces_rating = Column(Integer, nullable=False, default=0)
     contest_num = Column(Integer, nullable=False, default=0)
     custom_color_ = Column('custom_color', String(10000))
+    is_freshman = Column(Boolean, default=False, nullable=False)
 
     @property
     def id(self):
@@ -28,8 +29,8 @@ class User(UserMixin, Base):
 
     @property
     def oj_username(self):
-        from app.models.oj_username import OJUsername
         from app.models.oj import OJ
+        from app.models.oj_username import OJUsername
         res = OJUsername.search(username=self.username, page_size=-1)['data']
         r = list()
         for i in OJ.search(status=1, page_size=-1)['data']:

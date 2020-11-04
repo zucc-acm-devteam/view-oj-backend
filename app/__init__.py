@@ -31,6 +31,12 @@ def register_plugin(flask_app):
 
 
 def create_app():
+    from datetime import datetime
+
+    from app.libs.global_varible import g
+
+    g.run_start_time = datetime.now().strftime("%a %b %d %Y %H:%M:%S")
+
     flask_app = Flask(__name__)
 
     # 导入配置

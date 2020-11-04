@@ -57,12 +57,13 @@ class AcceptProblem(Base):
         return res
 
     @staticmethod
-    def search_all_users_distribute(start_date, end_date):
+    def search_all_users_distribute(start_date, end_date, is_freshman):
         accept_problems = AcceptProblem.query \
             .filter(AcceptProblem.create_time >= start_date) \
             .filter(AcceptProblem.create_time < end_date + datetime.timedelta(days=1)).subquery()
         res = db.session.query(User, func.count(accept_problems.c.problem_id)). \
             filter(User.status == 1). \
+            filter(User.is_freshman == is_freshman). \
             outerjoin(accept_problems). \
             group_by(User.username).all()
         return res

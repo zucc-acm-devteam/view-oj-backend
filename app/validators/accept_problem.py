@@ -9,4 +9,10 @@ class SearchAcceptProblemForm(SearchForm, DateForm):
 
 
 class SearchAcceptProblemSummaryForm(DateForm):
-    pass
+    is_freshman = StringField()
+
+    def validate_is_freshman(self, value):
+        if self.is_freshman.data is None:
+            self.is_freshman.data = False
+        else:
+            self.is_freshman.data = self.is_freshman.data.lower() == 'true'

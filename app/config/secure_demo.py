@@ -12,8 +12,8 @@ SECRET_KEY = '123'
 
 # 定义celery信息
 BROKER_URL = ''
-CELERY_TASK_SERIALIZER = 'pickle'
-CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERY_QUEUES = (
@@ -21,11 +21,35 @@ CELERY_QUEUES = (
     Queue("task_single", routing_key="task_single")
 )
 CELERY_ROUTES = {
-    'tasks.task_f': {
+    'tasks.crawl_accept_problem_schedule_task': {
         'queue': 'task',
         'routing_key': 'task',
     },
-    'tasks.task_single_f': {
+    'tasks.calculate_user_rating_schedule_task': {
+        'queue': 'task',
+        'routing_key': 'task',
+    },
+    'tasks.crawl_course_info_schedule_task': {
+        'queue': 'task',
+        'routing_key': 'task',
+    },
+    'tasks.crawl_accept_problem_task': {
+        'queue': 'task',
+        'routing_key': 'task',
+    },
+    'tasks.calculate_user_rating_task': {
+        'queue': 'task',
+        'routing_key': 'task',
+    },
+    'tasks.crawl_problem_rating_task': {
+        'queue': 'task',
+        'routing_key': 'task',
+    },
+    'tasks.crawl_course_info_task': {
+        'queue': 'task',
+        'routing_key': 'task',
+    },
+    'tasks.crawl_accept_problem_task_single': {
         'queue': 'task_single',
         'routing_key': 'task_single',
     },

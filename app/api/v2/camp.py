@@ -5,7 +5,7 @@ from sqlalchemy import func
 from app.libs.auth import admin_only
 from app.libs.error_code import AuthFailed, CreateSuccess, NotFound, Success
 from app.libs.red_print import RedPrint
-from app.libs.spider_service import task_crawl_course_info
+from app.libs.spider_service import submit_crawl_course_info_task
 from app.models.base import db
 from app.models.camp_models.camp import Camp
 from app.models.camp_models.camp_accept_problem import CampAcceptProblem
@@ -324,5 +324,5 @@ def get_contest_detail_api(id_):
 @login_required
 @admin_only
 def refresh_all_api():
-    task_crawl_course_info()
+    submit_crawl_course_info_task()
     raise CreateSuccess('Task has been created')

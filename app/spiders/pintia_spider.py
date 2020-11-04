@@ -34,7 +34,9 @@ class PintiaSpider(BaseSpider):
         ('994805342720868352', 'A'),  # 甲级
         ('994805260223102976', 'B'),  # 乙级
     ]
-    pintia_http = PintiaHttp()
+
+    def __init__(self):
+        self.pintia_http = PintiaHttp()
 
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username

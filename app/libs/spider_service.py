@@ -15,7 +15,6 @@ from app.models.user import User
 from app.spiders.base_spider import BaseSpider
 from app.spiders.camp_spiders.hdu_camp_spider import HduCampSpider
 from app.spiders.camp_spiders.nowcoder_camp_spider import NowcoderCampSpider
-# 导入spider
 from app.spiders.codeforces_spider import CodeforcesSpider
 from app.spiders.hdu_spider import HduSpider
 from app.spiders.hysbz_spider import HysbzSpider
@@ -29,8 +28,9 @@ from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zucc_spider import ZuccSpider
 
 
-def task_crawl_accept_problem(username=None, oj_id=None):
-    from tasks import task_f, task_single_f
+def submit_crawl_accept_problem_task(username=None, oj_id=None):
+    from tasks import (crawl_accept_problem_task,
+                       crawl_accept_problem_task_single)
     if username:
         user_list = [User.get_by_id(username)]
     else:
@@ -42,10 +42,10 @@ def task_crawl_accept_problem(username=None, oj_id=None):
 
     for user in user_list:
         for oj in oj_id_list:
-            if oj.name in ['pintia', 'luogu']:
-                task_single_f.delay(crawl_accept_problem, username=user.username, oj_id=oj.id)
+            if oj.need_single_thread:
+                crawl_accept_problem_task.delay(user.username, oj.id)
             else:
-                task_f.delay(crawl_accept_problem, username=user.username, oj_id=oj.id)
+                crawl_accept_problem_task_single.delay(user.username, oj.id)
 
 
 def crawl_accept_problem(username, oj_id):
@@ -92,14 +92,14 @@ def crawl_accept_problem(username, oj_id):
     for i in deduplication_accept_problem:
         oj = OJ.get_by_name(i['oj'])
         problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
-        task_crawl_problem_rating(problem.id)
+        submit_crawl_problem_rating_task(problem.id)
         accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
         accept_problem.modify(create_time=str_to_datetime(i['accept_time']), referer_oj_id=oj_id)
 
 
-def task_crawl_problem_rating(problem_id):
-    from tasks import task_f
-    task_f.delay(crawl_problem_rating, problem_id=problem_id)
+def submit_crawl_problem_rating_task(problem_id):
+    from tasks import crawl_problem_rating_task
+    crawl_problem_rating_task.delay(problem_id)
 
 
 def crawl_problem_rating(problem_id):
@@ -114,15 +114,15 @@ def crawl_problem_rating(problem_id):
     problem.modify(rating=rating)
 
 
-def task_crawl_course_info(course_id=None):
-    from tasks import task_f
+def submit_crawl_course_info_task(course_id=None):
+    from tasks import crawl_course_info_task
     if course_id is None:
         course_list = Course.search(page_size=-1)['data']
     else:
         course_list = [Course.get_by_id(course_id)]
     for course in course_list:
         if course.camp_oj.status == 1:
-            task_f.delay(crawl_course_info, course_id=course.id)
+            crawl_course_info_task.delay(course.id)
 
 
 def crawl_course_info(course_id):

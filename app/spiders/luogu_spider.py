@@ -74,7 +74,7 @@ class LuoguSpider(BaseSpider):
                     if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
                         finished = True
                         continue
-                    if real_oj != 'luogu-team':
+                    if real_oj != 'luogu-user':
                         accept_problem_list.append({
                             'oj': real_oj,
                             'problem_pid': problem_pid,
@@ -135,6 +135,9 @@ class LuoguSpider(BaseSpider):
         elif problem_pid.startswith("UVA"):
             real_oj_name = 'uva'
             problem_pid = problem_pid[3:]
+        elif problem_pid[0] == 'U':
+            real_oj_name = 'luogu-user'
+            problem_pid = problem_pid[1:]
         else:
             raise Exception('problem can not resolve')
         return real_oj_name, problem_pid
