@@ -6,6 +6,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # 定义flask信息
 SECRET_KEY = '123'
+
 # 以下两行如果需要允许跨域则添加，防止chrome禁止
 # SESSION_COOKIE_SECURE = True
 # SESSION_COOKIE_SAMESITE = 'None'
