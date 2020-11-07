@@ -20,3 +20,11 @@ class OJUsername(Base):
         r = cls.search(username=username, oj_id=oj_id)['data']
         if r:
             return r[0]
+
+    def delete(self):
+        from app.models.base import db
+        from app.models.accept_problem import AcceptProblem
+        db.session.query(AcceptProblem).\
+            filter(AcceptProblem.referer_oj_id == self.oj_id). \
+            filter(AcceptProblem.username == self.username).delete()
+        super().delete()
