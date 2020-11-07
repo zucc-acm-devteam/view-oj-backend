@@ -31,7 +31,18 @@ class Problem(Base):
                     return "https://codeforces.com/problemset/problem/{}/{}".format(problem_id_1, problem_id_2)
                 else:
                     return "https://codeforces.com/gym/{}/problem/{}".format(problem_id_1, problem_id_2)
-
+            elif self.oj.name == 'luogu':
+                url = 'https://www.luogu.org/problem/{}'
+                if self.problem_pid.startswith('team-'):
+                    prefix = 'T'
+                    problem_pid = self.problem_pid[5:]
+                elif self.problem_pid.startswith('user-'):
+                    prefix = 'U'
+                    problem_pid = self.problem_pid[5:]
+                else:
+                    prefix = 'P'
+                    problem_pid = self.problem_pid
+                return url.format(prefix + problem_pid)
             return self.oj.url.format(self.problem_pid)
         except:
             return None
