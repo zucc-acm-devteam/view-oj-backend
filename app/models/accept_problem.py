@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy import (Column, Date, DateTime, ForeignKey, Integer, String,
-                        cast, func)
+                        cast, desc, func)
 
 from app.models.base import Base, db
 from app.models.oj import OJ
@@ -65,5 +65,5 @@ class AcceptProblem(Base):
             filter(User.status == 1). \
             filter(User.is_freshman == is_freshman). \
             outerjoin(accept_problems). \
-            group_by(User.username).all()
+            group_by(User.username).order_by(desc(func.count(accept_problems.c.problem_id))).all()
         return res
