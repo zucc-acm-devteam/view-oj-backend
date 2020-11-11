@@ -24,7 +24,12 @@ class OJUsername(Base):
     def delete(self):
         from app.models.base import db
         from app.models.accept_problem import AcceptProblem
-        db.session.query(AcceptProblem).\
+        from app.models.codeforces_rounds import CodeforcesRounds
+        from app.models.oj import OJ
+        db.session.query(AcceptProblem). \
             filter(AcceptProblem.referer_oj_id == self.oj_id). \
             filter(AcceptProblem.username == self.username).delete()
+        if OJ.get_by_id(self.oj_id).name == 'codeforces':
+            db.session.query(CodeforcesRounds). \
+                filter(CodeforcesRounds.username == self.username).delete()
         super().delete()
