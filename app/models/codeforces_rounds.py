@@ -13,7 +13,7 @@ class CodeforcesRounds(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), ForeignKey(User.username))
-    round_name = Column(String(100), nullable=False)
+    round_name = Column(String(10000), nullable=False)
     rank = Column(Integer, nullable=False)
     rating_change = Column(Integer, nullable=False)
     create_time = Column(DateTime, nullable=False)
