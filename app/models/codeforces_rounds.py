@@ -9,7 +9,7 @@ from app.models.user import User
 
 class CodeforcesRounds(Base):
     __tablename__ = 'codeforces_rounds'
-    fields = ['id', 'username', 'round_name', 'rating_change', 'create_time']
+    fields = ['id', 'username', 'rank', 'round_name', 'rating_change', 'create_time']
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), ForeignKey(User.username))
