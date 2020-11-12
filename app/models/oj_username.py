@@ -25,6 +25,7 @@ class OJUsername(Base):
         from app.models.base import db
         from app.models.accept_problem import AcceptProblem
         from app.models.codeforces_rounds import CodeforcesRounds
+        from app.models.user import User
         from app.models.oj import OJ
         db.session.query(AcceptProblem). \
             filter(AcceptProblem.referer_oj_id == self.oj_id). \
@@ -32,4 +33,6 @@ class OJUsername(Base):
         if OJ.get_by_id(self.oj_id).name == 'codeforces':
             db.session.query(CodeforcesRounds). \
                 filter(CodeforcesRounds.username == self.username).delete()
+            User.get_by_id(self.username).modify(codeforces_rating=0, contest_num=0)
+
         super().delete()
