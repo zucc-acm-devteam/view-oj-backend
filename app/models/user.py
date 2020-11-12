@@ -77,6 +77,13 @@ class User(UserMixin, Base):
             ).group_by(cast(AcceptProblem.create_time, Date)).order_by(cast(AcceptProblem.create_time, Date)).all()]
 
     @property
+    def cf_rating_trend(self):
+        from app.models.codeforces_rounds import CodeforcesRounds
+        return db.session.query(CodeforcesRounds). \
+            filter(CodeforcesRounds.username == self.username). \
+            order_by(cast(CodeforcesRounds.create_time, Date)).all()
+
+    @property
     def custom_color(self):
         if self.custom_color_ is None:
             return None
