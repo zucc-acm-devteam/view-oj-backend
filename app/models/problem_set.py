@@ -22,17 +22,19 @@ class ProblemSet(Base):
 
     @property
     def detail(self):
+        from app.models.base import db
         from app.models.accept_problem import AcceptProblem
         from app.models.user import User
-        res = []
-        user_list = User.search(status=1, page_size=-1)['data']
-        for i in user_list:
-            res.append({
-                'user': i,
-                'data': AcceptProblem.query.filter(
-                    AcceptProblem.username == i.username,
-                    AcceptProblem.problem_id.in_([i.id for i in self.problem_list])).all()
-            })
+        query_res = db.session.query(User, AcceptProblem). \
+            filter(User.status == 1, User.is_freshman == 0). \
+            filter(AcceptProblem.username == User.username). \
+            filter(AcceptProblem.problem_id.in_([i.id for i in self.problem_list])).all()
+        res = {}
+        for user in User.search(status=1, is_freshman=0, page_size=-1)['data']:
+            res.setdefault(user, [])
+        for user, acp in query_res:
+            res[user].append(acp)
+        res = [{'user': i[0], 'data': i[1]} for i in res.items()]
         return res
 
     @classmethod
