@@ -66,10 +66,10 @@ class ProblemSet(Base):
         for i in ProblemRelationship.search(problem_set_id=self.id, page_size=-1)['data']:
             i.delete()
         for i in kwargs['problem_list']:
-            oj_name, problem_pid = i.split('-', 1)
+            oj_name, problem_pid = i['problem'].split('-', 1)
             oj = OJ.get_by_name(oj_name)
             problem = Problem.get_by_oj_id_and_problem_pid(oj.id, problem_pid)
-            ProblemRelationship.create(problem_id=problem.id, problem_set_id=self.id)
+            ProblemRelationship.create(problem_id=problem.id, problem_set_id=self.id, difficulty=i['difficulty'])
 
     def delete(self):
         from app.models.problem_relationship import ProblemRelationship
