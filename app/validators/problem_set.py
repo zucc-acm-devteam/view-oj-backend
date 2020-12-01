@@ -19,7 +19,7 @@ class CreateProblemSetForm(BaseForm):
         except Exception:
             raise ValidationError('Problem list must be list')
         for i in self.problem_list.data:
-            if re.match('[a-z_]+-.+', i) is None:
+            if re.match('[a-z_]+-.+', i['problem']) is None:
                 raise ValidationError('Problem format error')
 
 
