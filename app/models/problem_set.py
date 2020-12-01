@@ -17,7 +17,12 @@ class ProblemSet(Base):
         from app.models.problem_relationship import ProblemRelationship
         r = list()
         for i in ProblemRelationship.search(problem_set_id=self.id, page_size=-1)['data']:
-            r.append(Problem.get_by_id(i.problem_id))
+            p = Problem.get_by_id(i.problem_id)
+            p.difficulty = i.difficulty
+            fields = Problem.fields.copy()
+            fields.append('difficulty')
+            p.fields = fields
+            r.append(p)
         return r
 
     @property

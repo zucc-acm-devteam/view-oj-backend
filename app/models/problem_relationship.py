@@ -11,3 +11,4 @@ class ProblemRelationship(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     problem_id = Column(Integer, ForeignKey(Problem.id))
     problem_set_id = Column(Integer, ForeignKey(ProblemSet.id))
+    difficulty = Column(Integer, default=0, nullable=False)
