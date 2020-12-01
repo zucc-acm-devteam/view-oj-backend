@@ -84,6 +84,24 @@ class User(UserMixin, Base):
             order_by(cast(CodeforcesRounds.create_time, Date)).all()
 
     @property
+    def cf_statistics(self):
+        from app.models.codeforces_rounds import CodeforcesRounds
+        from datetime import datetime, timedelta
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=7)
+        res = db.session.query(CodeforcesRounds). \
+            filter(CodeforcesRounds.username == self.username). \
+            filter(CodeforcesRounds.create_time <= end_date, CodeforcesRounds.create_time > start_date). \
+            order_by(cast(CodeforcesRounds.create_time, Date)).all()
+        cnt = len(res)
+        rating_change = sum([i.rating_change for i in res])
+        return {
+            'count': cnt,
+            'rating_change': rating_change,
+            'last_rating': self.codeforces_rating
+        }
+
+    @property
     def custom_color(self):
         if self.custom_color_ is None:
             return None
