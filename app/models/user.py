@@ -85,8 +85,9 @@ class User(UserMixin, Base):
 
     @property
     def cf_statistics(self):
-        from app.models.codeforces_rounds import CodeforcesRounds
         from datetime import datetime, timedelta
+
+        from app.models.codeforces_rounds import CodeforcesRounds
         end_date = datetime.now()
         start_date = end_date - timedelta(days=7)
         res = db.session.query(CodeforcesRounds). \

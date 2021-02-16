@@ -27,8 +27,8 @@ class ProblemSet(Base):
 
     @property
     def detail(self):
-        from app.models.base import db
         from app.models.accept_problem import AcceptProblem
+        from app.models.base import db
         from app.models.user import User
         query_res = db.session.query(User, AcceptProblem). \
             filter(User.status == 1, User.is_freshman == 0). \
