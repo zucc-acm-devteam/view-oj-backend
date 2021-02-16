@@ -24,7 +24,7 @@ class BaseSearchCompetitionForm(BaseForm):
 
 class CreateCompetitionForm(DateTimeForm):
     name = StringField(validators=[DataRequired(message='competition name cannot be empty')])
-    link = StringField(validators=[DataRequired(message='competition link cannot be empty')])
+    link = StringField()
     remark = StringField()
 
 
