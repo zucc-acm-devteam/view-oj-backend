@@ -5,16 +5,15 @@ from app.libs.auth import admin_only
 from app.libs.error_code import CreateSuccess, DeleteSuccess, NotFound
 from app.libs.red_print import RedPrint
 from app.models.competition import Competition
-from app.validators.base import BaseForm
 from app.validators.competition import (
-    CreateCompetitionForm, ModifyCompetitionForm)
+    CreateCompetitionForm, ModifyCompetitionForm, BaseSearchCompetitionForm)
 
 api = RedPrint('competition')
 
 
 @api.route('/', methods=['GET'])
 def get_competition_api():
-    form = BaseForm().validate_for_api().data_
+    form = BaseSearchCompetitionForm().validate_for_api().data_
     competition_list = Competition.search_from_now(**form)
     return jsonify({
         'code': 0,
@@ -28,7 +27,7 @@ def get_competition_api():
 def create_competition_api():
     form = CreateCompetitionForm().validate_for_api().data_
     Competition.create(**form)
-    raise CreateSuccess('Problem set has been created')
+    raise CreateSuccess('Competition has been created')
 
 
 @api.route('/<int:id_>', methods=['PUT'])
