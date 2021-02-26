@@ -34,7 +34,7 @@ def valid_oj_api():
 
 @api.route('/summary', methods=['GET'])
 def summary_api():
-    camps = Camp.search(page_size=-1)['data']
+    camps = Camp.search(page_size=-1, order={'id': 'desc'})['data']
     return jsonify({
         'code': 0,
         'data': [{

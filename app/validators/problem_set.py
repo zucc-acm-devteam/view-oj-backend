@@ -4,10 +4,10 @@ import re
 from wtforms import StringField
 from wtforms.validators import DataRequired, ValidationError
 
-from app.validators.base import BaseForm
+from app.validators.base import NotRequiredDateTimeForm
 
 
-class CreateProblemSetForm(BaseForm):
+class CreateProblemSetForm(NotRequiredDateTimeForm):
     name = StringField(validators=[DataRequired(message='Problem set name cannot be empty')])
     problem_list = StringField(validators=[DataRequired(message='Problem list cannot be empty')])
 
@@ -23,7 +23,7 @@ class CreateProblemSetForm(BaseForm):
                 raise ValidationError('Problem format error')
 
 
-class ModifyProblemSetForm(BaseForm):
+class ModifyProblemSetForm(NotRequiredDateTimeForm):
     name = StringField()
     problem_list = StringField()
 

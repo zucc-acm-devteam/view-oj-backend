@@ -6,10 +6,12 @@ from app.models.base import Base
 class ProblemSet(Base):
     __tablename__ = 'problem_set'
 
-    fields = ['id', 'name']
+    fields = ['id', 'name', 'start_time', 'end_time']
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
 
     @property
     def problem_list(self):
