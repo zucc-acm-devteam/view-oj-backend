@@ -1,8 +1,7 @@
 from wtforms import IntegerField, StringField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 
-from app.validators.base import DateTimeForm, BaseForm
-from wtforms.validators import ValidationError
+from app.validators.base import BaseForm, DateTimeForm
 
 
 class BaseSearchCompetitionForm(BaseForm):

@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer
 
 from app.models.base import Base
 from app.models.problem import Problem
-from app.models.problem_set import ProblemSet
+from app.models.problem_set.problem_set import ProblemSet
 
 
 class ProblemRelationship(Base):

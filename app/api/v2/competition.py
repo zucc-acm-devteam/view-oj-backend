@@ -5,8 +5,9 @@ from app.libs.auth import admin_only
 from app.libs.error_code import CreateSuccess, DeleteSuccess, NotFound
 from app.libs.red_print import RedPrint
 from app.models.competition import Competition
-from app.validators.competition import (
-    CreateCompetitionForm, ModifyCompetitionForm, BaseSearchCompetitionForm)
+from app.validators.competition import (BaseSearchCompetitionForm,
+                                        CreateCompetitionForm,
+                                        ModifyCompetitionForm)
 
 api = RedPrint('competition')
 
