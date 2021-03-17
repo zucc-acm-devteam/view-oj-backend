@@ -100,7 +100,8 @@ class CodeforcesSpider(BaseSpider):
         res = self.codeforces_http.get(url=url).json()['result']
         contest_num = len(res)
         user = User.get_by_id(oj_username.username)
-        user.modify(codeforces_rating=rating, contest_num=contest_num)
+        t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(res[-1]['ratingUpdateTimeSeconds']))
+        user.modify(codeforces_rating=rating, contest_num=contest_num, last_cf_date=str_to_datetime(t).date())
         for round in res:
             t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(round['ratingUpdateTimeSeconds']))
             cf_round = CodeforcesRounds.get_by_username_and_round_name(oj_username.username, round['contestName'])

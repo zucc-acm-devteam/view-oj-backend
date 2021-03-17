@@ -20,6 +20,7 @@ class User(UserMixin, Base):
     rating = Column(Integer, nullable=False, default=0)
     codeforces_rating = Column(Integer, nullable=False, default=0)
     contest_num = Column(Integer, nullable=False, default=0)
+    last_cf_date = Column(Date)
     custom_color_ = Column('custom_color', String(10000))
     is_freshman = Column(Boolean, default=False, nullable=False)
 

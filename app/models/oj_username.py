@@ -33,6 +33,6 @@ class OJUsername(Base):
         if OJ.get_by_id(self.oj_id).name == 'codeforces':
             db.session.query(CodeforcesRounds). \
                 filter(CodeforcesRounds.username == self.username).delete()
-            User.get_by_id(self.username).modify(codeforces_rating=0, contest_num=0)
+            User.get_by_id(self.username).modify(codeforces_rating=0, contest_num=0, last_cf_date=None)
 
         super().delete()
