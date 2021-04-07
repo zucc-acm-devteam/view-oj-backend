@@ -1,5 +1,4 @@
 import json
-import re
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.helper import datetime_to_str, str_to_datetime
@@ -10,60 +9,62 @@ from app.spiders.base_spider import BaseSpider
 class LojSpider(BaseSpider):
     def get_user_info(self, oj_username, accept_problems):
         username = oj_username.oj_username
-        try:
-            self._get_user_id(username)
-        except:
+        if not self._find_user_id(username):
             return {'success': False, 'data': []}
-        success = True
         accept_problem_list = []
-        url = 'https://loj.ac/submissions?submitter={}&status=Accepted'.format(username)
-        ok = False
-        bottom = -1
-        while True:
-            res = SpiderHttp().get(url=url)
-            itemlist = re.findall(r'const itemList = ([\s\S]+?);', res.text)[0]
-            datalist = json.loads(itemlist)
-            if not datalist:
-                break
-            for data in datalist:
-                data = data['info']
-                problem_id = str(data['problemId'])
-                accept_time = self._make_time_strict(data['submitTime'])
-                bottom = data['submissionId']
-                if accept_problems.get('loj-' + problem_id) == accept_time:
-                    ok = True
-                    continue
-                accept_problem_list.append({
-                    'oj': 'loj',
-                    'problem_pid': problem_id,
-                    'accept_time': accept_time
-                })
-            if ok:
-                break
-            url = 'https://loj.ac/submissions?submitter={}' \
-                  '&status=Accepted&currPageBottom={}&page=1'.format(username, bottom)
+        url = 'https://api.loj.ac.cn/api/submission/querySubmission'
+        request_data = {
+            'locale': 'zh_CN',
+            'status': 'Accepted',
+            'submitter': username,
+            'takeCount': 10
+        }
+        has_smaller = True
+        now = -1
+        try:
+            while has_smaller:
+                if now != -1:
+                    request_data['maxId'] = now - 1
+                res = SpiderHttp().post(url=url, data=json.dumps(request_data), headers={
+                    'Content-Type': 'application/json'
+                }).json()
+                has_smaller = res['hasSmallerId']
+                for data in res['submissions']:
+                    problem_id = str(data['problem']['id'])
+                    accept_time = self._make_time_strict(data['submitTime'])
+                    now = data['id']
+                    if accept_problems.get('loj-' + problem_id) == accept_time:
+                        break
+                    accept_problem_list.append({
+                        'oj': 'loj',
+                        'problem_pid': problem_id,
+                        'accept_time': accept_time
+                    })
+        except:
+            return {'success': False, 'data': {}}
 
-        return {'success': success, 'data': accept_problem_list}
+        return {'success': True, 'data': accept_problem_list}
 
     def get_problem_info(self, problem_id):
-        try:
-            url = 'http://loj.ac/problems/search?keyword={}'.format(problem_id)
-            res = SpiderHttp().get(url=url)
-            data = re.findall(r'<td>(\d+)</td>\n.*<td>(\d+)</td>', res.text)[0]
-            accept = int(data[0])
-            total = int(data[1])
-            rating = DEFAULT_PROBLEM_RATING
-        except:
-            rating = DEFAULT_PROBLEM_RATING
-        return {'rating': rating}
+        return {'rating': DEFAULT_PROBLEM_RATING}
 
     @staticmethod
-    def _get_user_id(username):
-        url = 'http://loj.ac/find_user?nickname={}'.format(username)
+    def _find_user_id(username):
+        url = 'https://api.loj.ac.cn/api/user/searchUser?query={}'.format(username)
         res = SpiderHttp().get(url=url)
-        uid = re.findall(r'user/(\d+)', res.url)[0]
-        return uid
+        ok = False
+        try:
+            for i in res.json()['userMetas']:
+                if i['username'] == username:
+                    ok = True
+                    break
+        except:
+            pass
+        return ok
 
     @staticmethod
     def _make_time_strict(time):
-        return datetime_to_str(str_to_datetime(time))
+        import datetime
+        time = time.replace('T', ' ')[:-5]
+        time = datetime_to_str(str_to_datetime(time) + datetime.timedelta(hours=8))
+        return time
