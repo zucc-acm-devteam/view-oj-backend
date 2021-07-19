@@ -7,7 +7,6 @@ import requests
 
 from app.config.secure import LUOGU_ID, LUOGU_PASSWORD
 from app.config.setting import DEFAULT_PROBLEM_RATING
-from app.libs.cookie import Cookie
 from app.libs.helper import timestamp_to_str
 from app.libs.spider_http import SpiderHttp
 from app.models.mapping import Mapping
@@ -69,7 +68,11 @@ class LuoguSpider(BaseSpider):
             for i in res['currentData']['records']['result']:
                 success = True
                 if i['status'] == 12:
-                    real_oj, problem_pid = self._change_problem_pid(i['problem']['pid'])
+                    try:
+                        real_oj, problem_pid = self._change_problem_pid(i['problem']['pid'])
+                    except Exception as e:
+                        print(e)
+                        continue
                     accept_time = timestamp_to_str(i['submitTime'])
                     if accept_problems.get('{}-{}'.format(real_oj, problem_pid)) == accept_time:
                         finished = True
@@ -139,7 +142,7 @@ class LuoguSpider(BaseSpider):
             real_oj_name = 'luogu'
             problem_pid = 'user-' + problem_pid[1:]
         else:
-            raise Exception('problem can not resolve')
+            raise Exception(f'problem {problem_pid} can not resolve')
         return real_oj_name, problem_pid
 
     def check_login_status(self):
@@ -202,3 +205,15 @@ class LuoguSpider(BaseSpider):
         url = 'https://www.luogu.com.cn/auth/login'
         res = self.luogu_http.get(url=url)
         return re.search(r'<meta name="csrf-token" content="(.*?)">', res.text).group(1)
+
+
+if __name__ == '__main__':
+    from flask_app import app
+
+    app.app_context().push()
+    from app.models.oj_username import OJUsername
+
+    oju = OJUsername()
+    oju.oj_username = '417724'
+    res = LuoguSpider().get_user_info(oju, {})
+    print(res)
