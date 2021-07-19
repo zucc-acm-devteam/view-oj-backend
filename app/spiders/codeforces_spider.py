@@ -24,7 +24,8 @@ class CodeforcesSpider(BaseSpider):
     codeforces_http = CodeforcesHttp()
 
     def get_user_info(self, oj_username, accept_problems):
-        self.crawl_user_rounds_info(oj_username)
+        if not oj_username.is_child_account and not oj_username.is_team_account:
+            self.crawl_user_rounds_info(oj_username)
         username = oj_username.oj_username
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)

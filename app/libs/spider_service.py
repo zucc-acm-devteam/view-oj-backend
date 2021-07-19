@@ -13,19 +13,6 @@ from app.models.oj_username import OJUsername
 from app.models.problem import Problem
 from app.models.user import User
 from app.spiders.base_spider import BaseSpider
-from app.spiders.camp_spiders.hdu_camp_spider import HduCampSpider
-from app.spiders.camp_spiders.nowcoder_camp_spider import NowcoderCampSpider
-from app.spiders.codeforces_spider import CodeforcesSpider
-from app.spiders.hdu_spider import HduSpider
-from app.spiders.hysbz_spider import HysbzSpider
-from app.spiders.jisuanke_spider import JisuankeSpider
-from app.spiders.loj_spider import LojSpider
-from app.spiders.luogu_spider import LuoguSpider
-from app.spiders.nowcoder_spider import NowcoderSpider
-from app.spiders.pintia_spider import PintiaSpider
-from app.spiders.poj_spider import PojSpider
-from app.spiders.vjudge_spider import VjudgeSpider
-from app.spiders.zucc_spider import ZuccSpider
 
 
 def submit_crawl_accept_problem_task(username=None, oj_id=None):
@@ -55,46 +42,48 @@ def crawl_accept_problem(username, oj_id):
     oj = OJ.get_by_id(oj_id)
     if not oj:
         return
-    oj_username = OJUsername.search(username=username, oj_id=oj_id)['data']
-    if not oj_username:
+    oj_usernames = OJUsername.search(username=username, oj_id=oj_id)['data']
+    if not oj_usernames:
         return
 
-    oj_username = oj_username[0]
-    oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']()
+    for oj_username in oj_usernames:
+        oj_spider: BaseSpider = globals()[oj.name.title() + 'Spider']()
 
-    accept_problems = dict()
+        accept_problems = dict()
 
-    for i in AcceptProblem.search(username=username, page_size=-1)['data']:
-        accept_problems["{}-{}".format(i.problem.oj.name, i.problem.problem_pid)] = \
-            datetime.datetime.strftime(i.create_time, '%Y-%m-%d %H:%M:%S')
+        for i in AcceptProblem.search(oj_username_id=oj_username.id, page_size=-1)['data']:
+            accept_problems["{}-{}".format(i.problem.oj.name, i.problem.problem_pid)] = \
+                datetime.datetime.strftime(i.create_time, '%Y-%m-%d %H:%M:%S')
 
-    res = oj_spider.get_user_info(oj_username, accept_problems.copy())
-    if res['success']:
-        oj_username.modify(last_success_time=datetime.datetime.now())
-    crawl_accept_problems = res['data']
-    print(crawl_accept_problems)
+        res = oj_spider.get_user_info(oj_username, accept_problems.copy())
+        if res['success']:
+            oj_username.modify(last_success_time=datetime.datetime.now())
+        crawl_accept_problems = res['data']
+        print(crawl_accept_problems)
 
-    deduplication_accept_problem = list()
+        deduplication_accept_problem = list()
 
-    for i in crawl_accept_problems:
-        pid = "{}-{}".format(i['oj'], i['problem_pid'])
-        if i['accept_time'] is not None:
-            if accept_problems.get(pid):
-                if i['accept_time'] < accept_problems.get(pid):
+        for i in crawl_accept_problems:
+            pid = "{}-{}".format(i['oj'], i['problem_pid'])
+            if i['accept_time'] is not None:
+                if accept_problems.get(pid):
+                    if i['accept_time'] < accept_problems.get(pid):
+                        deduplication_accept_problem.append(i)
+                else:
                     deduplication_accept_problem.append(i)
             else:
-                deduplication_accept_problem.append(i)
-        else:
-            if accept_problems.get(pid) is None:
-                deduplication_accept_problem.append(i)
+                if accept_problems.get(pid) is None:
+                    deduplication_accept_problem.append(i)
 
-    print(len(deduplication_accept_problem))
-    for i in deduplication_accept_problem:
-        oj = OJ.get_by_name(i['oj'])
-        problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
-        submit_crawl_problem_rating_task(problem.id)
-        accept_problem = AcceptProblem.get_by_username_and_problem_id(username, problem.id)
-        accept_problem.modify(create_time=str_to_datetime(i['accept_time']), referer_oj_id=oj_id)
+        print(len(deduplication_accept_problem))
+        for i in deduplication_accept_problem:
+            oj = OJ.get_by_name(i['oj'])
+            problem = Problem.get_by_oj_id_and_problem_pid(oj.id, i['problem_pid'])
+            submit_crawl_problem_rating_task(problem.id)
+            accept_problem = AcceptProblem.get_by_username_and_problem_id_and_oj_username_id(
+                username, problem.id, oj_username.id
+            )
+            accept_problem.modify(create_time=str_to_datetime(i['accept_time']), referer_oj_id=oj_id)
 
 
 def submit_crawl_problem_rating_task(problem_id):

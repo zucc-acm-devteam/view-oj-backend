@@ -5,6 +5,7 @@ from sqlalchemy import (Column, Date, DateTime, ForeignKey, Integer, String,
 
 from app.models.base import Base, db
 from app.models.oj import OJ
+from app.models.oj_username import OJUsername
 from app.models.problem import Problem
 from app.models.user import User
 
@@ -12,7 +13,7 @@ from app.models.user import User
 class AcceptProblem(Base):
     __tablename__ = 'accept_problem'
 
-    fields = ['id', 'username', 'referer_oj', 'problem', 'add_rating', 'create_time']
+    fields = ['id', 'username', 'referer_oj', 'problem', 'add_rating', 'create_time', 'oj_username_id']
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), ForeignKey(User.username))
@@ -20,6 +21,7 @@ class AcceptProblem(Base):
     referer_oj_id = Column(Integer, ForeignKey(OJ.id))
     add_rating = Column(Integer, nullable=False)
     create_time = Column(DateTime, nullable=False)
+    oj_username_id = Column(Integer, ForeignKey(OJUsername.id))
 
     @property
     def problem(self):
@@ -30,11 +32,11 @@ class AcceptProblem(Base):
         return OJ.get_by_id(self.referer_oj_id)
 
     @classmethod
-    def get_by_username_and_problem_id(cls, username, problem_id):
-        r = cls.search(username=username, problem_id=problem_id)['data']
+    def get_by_username_and_problem_id_and_oj_username_id(cls, username, problem_id, oj_username_id):
+        r = cls.search(username=username, problem_id=problem_id, oj_username_id=oj_username_id)['data']
         if r:
             return r[0]
-        return cls.create(username=username, problem_id=problem_id, add_rating=0)
+        return cls.create(username=username, problem_id=problem_id, oj_username_id=oj_username_id, add_rating=0)
 
     @staticmethod
     def search_distribute(username, start_date, end_date):

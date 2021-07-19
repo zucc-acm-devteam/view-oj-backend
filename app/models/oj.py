@@ -6,7 +6,7 @@ from app.models.base import Base
 class OJ(Base):
     __tablename__ = 'oj'
 
-    fields = ['id', 'name', 'status', 'need_password']
+    fields = ['id', 'name', 'status', 'need_password', 'allow_team', 'allow_child_account']
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), unique=True)
@@ -14,6 +14,8 @@ class OJ(Base):
     status = Column(Integer, nullable=False)
     need_password = Column(Boolean, nullable=False, default=False)
     need_single_thread = Column(Boolean, nullable=False, default=False)
+    allow_team = Column(Boolean, nullable=False, default=False)
+    allow_child_account = Column(Boolean, nullable=False, default=False)
 
     @classmethod
     def get_by_name(cls, name):

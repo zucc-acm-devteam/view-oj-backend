@@ -35,17 +35,26 @@ class User(UserMixin, Base):
         res = OJUsername.search(username=self.username, page_size=-1)['data']
         r = list()
         for i in OJ.search(status=1, page_size=-1)['data']:
-            oj_username = None
-            last_success_time = None
+            data = {
+                'main': [],
+                'team': [],
+                'child': []
+            }
             for j in res:
                 if j.oj_id == i.id:
-                    oj_username = j.oj_username
-                    last_success_time = j.last_success_time
-                    break
+                    title = 'main'
+                    if j.is_team_account:
+                        title = 'team'
+                    if j.is_child_account:
+                        title = 'child'
+                    data[title].append({
+                        'id': j.id,
+                        'oj_username': j.oj_username,
+                        'last_success_time': j.last_success_time
+                    })
             r.append({
                 'oj': i,
-                'oj_username': oj_username,
-                'last_success_time': last_success_time
+                'oj_username': data
             })
         return r
 

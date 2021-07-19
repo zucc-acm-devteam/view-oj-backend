@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Boolean, Integer, String
 
 from app.models.base import Base
 from app.models.user import User
@@ -14,6 +14,8 @@ class OJUsername(Base):
     oj_password = Column(String(100))
     oj_cookies = Column(String(10000))
     last_success_time = Column(DateTime)
+    is_team_account = Column(Boolean, nullable=False, default=False)
+    is_child_account = Column(Boolean, nullable=False, default=False)
 
     @classmethod
     def get_by_username_and_oj_id(cls, username, oj_id):
@@ -27,10 +29,11 @@ class OJUsername(Base):
         from app.models.codeforces_rounds import CodeforcesRounds
         from app.models.oj import OJ
         from app.models.user import User
-        db.session.query(AcceptProblem). \
-            filter(AcceptProblem.referer_oj_id == self.oj_id). \
-            filter(AcceptProblem.username == self.username).delete()
-        if OJ.get_by_id(self.oj_id).name == 'codeforces':
+        if not self.is_team_account:
+            db.session.query(AcceptProblem). \
+                filter(AcceptProblem.oj_username_id == self.id).delete()
+        if OJ.get_by_id(self.oj_id).name == 'codeforces' and \
+                not self.is_child_account and not self.is_team_account:
             db.session.query(CodeforcesRounds). \
                 filter(CodeforcesRounds.username == self.username).delete()
             User.get_by_id(self.username).modify(codeforces_rating=0, contest_num=0, last_cf_date=None)

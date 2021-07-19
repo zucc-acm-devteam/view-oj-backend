@@ -16,9 +16,13 @@ def submit_calculate_user_rating_task(username=None):
 
 def calculate_user_rating(username):
     rating = current_app.config['DEFAULT_USER_RATING']
+    accepted_problems = set()
     for i in AcceptProblem.search(username=username, order={'create_time': 'asc'}, page_size=-1)['data']:
         add_rating = calculate_user_add_rating(rating, i.problem.rating)
         i.modify(add_rating=add_rating)
+        if i.problem in accepted_problems:
+            continue
+        accepted_problems.add(i.problem)
         rating += add_rating
     user = User.get_by_id(username)
     user.modify(rating=rating)
