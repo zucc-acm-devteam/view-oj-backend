@@ -13,6 +13,19 @@ from app.models.oj_username import OJUsername
 from app.models.problem import Problem
 from app.models.user import User
 from app.spiders.base_spider import BaseSpider
+from app.spiders.camp_spiders.hdu_camp_spider import HduCampSpider
+from app.spiders.camp_spiders.nowcoder_camp_spider import NowcoderCampSpider
+from app.spiders.codeforces_spider import CodeforcesSpider
+from app.spiders.hdu_spider import HduSpider
+from app.spiders.hysbz_spider import HysbzSpider
+from app.spiders.jisuanke_spider import JisuankeSpider
+from app.spiders.loj_spider import LojSpider
+from app.spiders.luogu_spider import LuoguSpider
+from app.spiders.nowcoder_spider import NowcoderSpider
+from app.spiders.pintia_spider import PintiaSpider
+from app.spiders.poj_spider import PojSpider
+from app.spiders.vjudge_spider import VjudgeSpider
+from app.spiders.zucc_spider import ZuccSpider
 
 
 def submit_crawl_accept_problem_task(username=None, oj_id=None):
