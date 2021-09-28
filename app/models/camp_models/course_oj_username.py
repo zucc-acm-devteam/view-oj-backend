@@ -13,7 +13,7 @@ class CourseOJUsername(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(100), ForeignKey(User.username))
-    oj_id = Column(String(100), ForeignKey(CampOJ.id))
+    oj_id = Column(Integer, ForeignKey(CampOJ.id))
     oj_username = Column(String(100), nullable=False)
     last_success_time = Column(DateTime)
     course_id = Column(Integer, ForeignKey(Course.id))
