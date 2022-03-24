@@ -26,6 +26,7 @@ from app.spiders.pintia_spider import PintiaSpider
 from app.spiders.poj_spider import PojSpider
 from app.spiders.vjudge_spider import VjudgeSpider
 from app.spiders.zucc_spider import ZuccSpider
+from app.spiders.jiudge_spider import JiudgeSpider
 
 
 def submit_crawl_accept_problem_task(username=None, oj_id=None):
