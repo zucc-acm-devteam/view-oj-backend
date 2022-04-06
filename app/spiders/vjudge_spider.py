@@ -45,7 +45,7 @@ class VjudgeSpider(BaseSpider):
                 break
             success = True
             for submission in res['data']:
-                if submission['statusCanonical'] != 'AC':
+                if submission['status'] != 'Accepted':
                     continue
                 time_stamp = submission['time'] / 1000
                 accept_time = timestamp_to_str(time_stamp)
