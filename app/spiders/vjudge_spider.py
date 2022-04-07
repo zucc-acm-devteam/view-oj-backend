@@ -19,7 +19,7 @@ class VjudgeSpider(BaseSpider):
                 'Cookie': Cookie.dict_to_str(cookie)
             }
             self.vjudge_http.headers.update(headers)
-            assert self.check_login_status() == username
+            assert self.check_login_status().lower() == username.lower()
         except:
             try:
                 cookie = self._get_cookies(username, password)
@@ -29,7 +29,7 @@ class VjudgeSpider(BaseSpider):
                 'Cookie': Cookie.dict_to_str(cookie)
             }
             self.vjudge_http.headers.update(headers)
-            assert self.check_login_status() == username
+            assert self.check_login_status().lower() == username.lower()
 
         oj_username.modify(oj_cookies=json.dumps(cookie, sort_keys=True))
 
@@ -45,7 +45,7 @@ class VjudgeSpider(BaseSpider):
                 break
             success = True
             for submission in res['data']:
-                if submission['statusCanonical'] != 'AC':
+                if submission['status'] != 'Accepted':
                     continue
                 time_stamp = submission['time'] / 1000
                 accept_time = timestamp_to_str(time_stamp)
@@ -98,3 +98,4 @@ class VjudgeSpider(BaseSpider):
         elif name == 'libreoj':
             name = 'loj'
         return name
+
