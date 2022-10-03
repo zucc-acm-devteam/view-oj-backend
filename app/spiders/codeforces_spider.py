@@ -1,8 +1,9 @@
 import json
 import re
 import time
+from binascii import unhexlify, hexlify
 
-from bs4 import BeautifulSoup
+from Crypto.Cipher import AES
 
 from app.config.setting import DEFAULT_PROBLEM_RATING
 from app.libs.helper import str_to_datetime, timestamp_to_str
@@ -60,6 +61,8 @@ class CodeforcesSpider(BaseSpider):
         if int(problem_id_1) < 100000:  # 题目
             url = 'https://codeforces.com/problemset/problem/{}/{}'.format(problem_id_1, problem_id_2)
             res = self.codeforces_http.get(url=url)
+            if 'Redirecting...' in res.text:
+                res = self._set_RCPC(res)
             try:
                 rating = int(re.search(r'title="Difficulty">\s*\*(\d+)\s*</span>', res.text).group(1))
             except:
@@ -78,18 +81,17 @@ class CodeforcesSpider(BaseSpider):
         stars = mapping.value
         if stars:
             return star_rating[int(stars)]
-        url = 'https://codeforces.com/gyms'
-        req = SpiderHttp()
+        url = 'https://codeforces.com/api/contest.list?gym=true'
+        req = CodeforcesHttp()
         res = req.get(url=url)
-        soup = BeautifulSoup(res.text, 'lxml')
-        token = soup.find('input', {'name': 'csrf_token'})['value']
-        res = req.post(url=url, data={
-            'csrf_token': token,
-            'searchByNameOrIdQuery': contest_id,
-            'searchByProblem': False,
-        })
-        soup = BeautifulSoup(res.text, 'lxml')
-        stars = len(soup.find('tr', {'data-contestid': contest_id}).findAll('img'))
+        res = json.loads(res.text)
+        res = res['result']
+        for i in res:
+            id = i['id']
+            if int(id) == int(contest_id):
+                if 'difficulty' in i:
+                    stars = int(i['difficulty'])
+                break
         mapping.modify(value=str(stars))
         return star_rating[stars]
 
@@ -101,6 +103,7 @@ class CodeforcesSpider(BaseSpider):
         contest_num = len(res)
         user = User.get_by_id(oj_username.username)
         t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(res[-1]['ratingUpdateTimeSeconds']))
+        return res
         user.modify(codeforces_rating=rating, contest_num=contest_num, last_cf_date=str_to_datetime(t).date())
         for round in res:
             t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(round['ratingUpdateTimeSeconds']))
@@ -108,3 +111,15 @@ class CodeforcesSpider(BaseSpider):
             cf_round.modify(rank=round['rank'],
                             rating_change=round['newRating'] - round['oldRating'],
                             create_time=str_to_datetime(t))
+
+    def _set_RCPC(self, resp):
+        res = re.findall('toNumbers\("(.+?)"\)', resp.text)
+        text = unhexlify(res[2].encode('utf-8'))
+        key = unhexlify(res[0].encode('utf-8'))
+        iv = unhexlify(res[1].encode('utf-8'))
+
+        aes = AES.new(key, AES.MODE_CBC, iv)
+        res = hexlify(aes.decrypt(text)).decode('utf-8')
+        self.codeforces_http.sess.cookies.set('RCPC', res, domain='.codeforces.com', path='/')
+        url = re.findall('href="(.+?)"', resp.text)[0]
+        return self.codeforces_http.get(url=url)
