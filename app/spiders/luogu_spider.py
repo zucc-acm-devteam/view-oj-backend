@@ -190,10 +190,9 @@ class LuoguSpider(BaseSpider):
         })
         url = 'https://www.luogu.com.cn/api/verify/captcha'
         res = self.luogu_http.get(url=url)
-        predict_res = requests.post('http://fun.newitd.com/captcha/', data=res.content).json()
-        if predict_res['code'] != 0 or len(predict_res['message']) != 4:
-            return self._get_captcha()
-        captcha = predict_res['message']
+        import ddddocr
+        ocr = ddddocr.DdddOcr(show_ad=False)
+        captcha = ocr.classification(res.content)
         print(captcha)
         return captcha
 

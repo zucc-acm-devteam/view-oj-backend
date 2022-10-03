@@ -13,3 +13,8 @@ tenacity
 WTForms
 gunicorn
 beautifulsoup4
+SQLAlchemy
+Werkzeug
+kombu
+crypto
+ddddocr
